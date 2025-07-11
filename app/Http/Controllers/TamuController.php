@@ -28,14 +28,15 @@ class TamuController extends Controller
 
     public function store(Request $request)
     {
+        // Validasi dasar
         $request->validate([
-            'keperluan' => 'required',
+            'keperluan' => 'required|string',
             'jenis_tamu' => 'nullable|string',
-            'nama_tamu' => 'required|string',
-            // 'nama_penerima' => 'required|string',
-            'telepon' => 'required|string',
+            'nama_tamu' => 'required|string|max:255',
+            'telepon' => 'required|string|max:20',
             'foto' => 'required|string',
             'tanggal_kunjungan' => 'required|date',
+            // 'nama_penerima' => 'required_if:keperluan,lainnya|string|max:255', // Jika kamu pakai input penerima
         ]);
 
         // Decode base64 ke file
@@ -43,18 +44,19 @@ class TamuController extends Controller
             $data = substr($request->foto, strpos($request->foto, ',') + 1);
             $data = base64_decode($data);
             $extension = strtolower($type[1]);
-            $filename = uniqid() . '.' . $extension;
+            $filename = uniqid('foto_') . '.' . $extension;
 
             Storage::put("public/foto/{$filename}", $data);
         } else {
             return back()->withErrors(['foto' => 'Foto tidak valid.'])->withInput();
         }
 
+        // Simpan data tamu
         Tamu::create([
             'keperluan' => $request->keperluan,
-            'jenis_tamu' => $request->jenis_tamu,
+            'jenis_tamu' => $request->jenis_tamu ?? '-',
             'nama_tamu' => $request->nama_tamu,
-            // 'nama_penerima' => $request->nama_penerima,
+            // 'nama_penerima'   => $request->nama_penerima, // jika kolom ini digunakan
             'telepon' => $request->telepon,
             'foto' => $filename,
             'tanggal_kunjungan' => $request->tanggal_kunjungan,

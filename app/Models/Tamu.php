@@ -13,8 +13,12 @@ class Tamu extends Model
         'keperluan',
         'jenis_tamu',
         'nama_tamu',
-        'nama_penerima',
         'telepon',
         'foto',
+        'tanggal_kunjungan',
+        'nama_penerima',
+        'tanggal_kunjungan',
+        'jam_kunjungan',
     ];
+
 }

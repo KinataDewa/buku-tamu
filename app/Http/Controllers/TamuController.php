@@ -34,9 +34,10 @@ class TamuController extends Controller
             'jenis_tamu' => 'nullable|string',
             'nama_tamu' => 'required|string|max:255',
             'telepon' => 'required|string|max:20',
+            'nama_penerima' => 'nullable|string|max:255',
             'foto' => 'required|string',
             'tanggal_kunjungan' => 'required|date',
-            // 'nama_penerima' => 'required_if:keperluan,lainnya|string|max:255', // Jika kamu pakai input penerima
+            'jam_kunjungan' => 'nullable|string',
         ]);
 
         // Decode base64 ke file
@@ -56,20 +57,38 @@ class TamuController extends Controller
             'keperluan' => $request->keperluan,
             'jenis_tamu' => $request->jenis_tamu ?? '-',
             'nama_tamu' => $request->nama_tamu,
-            // 'nama_penerima'   => $request->nama_penerima, // jika kolom ini digunakan
             'telepon' => $request->telepon,
+            'nama_penerima' => $request->nama_penerima,
             'foto' => $filename,
             'tanggal_kunjungan' => $request->tanggal_kunjungan,
+            'jam_kunjungan' => $request->jam_kunjungan,
+
         ]);
 
         return redirect()->route('dashboard')->with('success', 'Data berhasil disimpan!');
     }
 
-    public function history()
+    public function history(Request $request)
     {
-        $tamus = Tamu::latest()->get();
+        $query = Tamu::query();
+
+        if ($request->filled('search')) {
+            $query->where('nama_tamu', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('tanggal')) {
+            $query->whereDate('created_at', $request->tanggal);
+        }
+
+        if ($request->filled('jenis_tamu')) {
+            $query->where('jenis_tamu', $request->jenis_tamu);
+        }
+
+        $tamus = $query->latest()->paginate(9);
+
         return view('history', compact('tamus'));
     }
+
 
     public function destroy($id)
     {

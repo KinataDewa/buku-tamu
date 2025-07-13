@@ -10,6 +10,41 @@
                 <i class="bi bi-file-earmark-spreadsheet me-2"></i> Export
             </a>
         </div>
+        <form method="GET" action="{{ route('history') }}" class="row g-2 mb-4">
+            <div class="col-md-4">
+                <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+                    placeholder="Cari nama tamu...">
+            </div>
+            <div class="col-md-3">
+                <input type="date" name="tanggal" value="{{ request('tanggal') }}" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <select name="jenis_tamu" class="form-select">
+                    <option value="">-- Semua Jenis Tamu --</option>
+                    <option value="Tamu Direksi" {{ request('jenis_tamu') == 'Tamu Direksi' ? 'selected' : '' }}>Tamu Direksi
+                    </option>
+                    <option value="Suplier/Vendor" {{ request('jenis_tamu') == 'Suplier/Vendor' ? 'selected' : '' }}>
+                        Suplier/Vendor</option>
+                    <option value="Customer/Owners" {{ request('jenis_tamu') == 'Customer/Owners' ? 'selected' : '' }}>
+                        Customer/Owners</option>
+                    <option value="Tamu Tenant" {{ request('jenis_tamu') == 'Tamu Tenant' ? 'selected' : '' }}>Tamu Tenant
+                    </option>
+                    <option value="Tamu Karyawan" {{ request('jenis_tamu') == 'Tamu Karyawan' ? 'selected' : '' }}>Tamu
+                        Karyawan
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-2 d-grid">
+                <button class="btn btn-warning text-white" type="submit">
+                    <i class="bi bi-funnel me-1"></i> Filter
+                </button>
+                <a href="{{ route('history') }}" class="btn btn-outline-secondary w-100 mt-2">
+                    <i class="bi bi-x-circle me-1"></i> Reset
+                </a>
+
+            </div>
+        </form>
+
 
         @if ($tamus->isEmpty())
             <div class="alert alert-warning text-center py-4 rounded-4">
@@ -34,7 +69,12 @@
                                 <li><strong>Telepon:</strong> {{ $tamu->telepon }}</li>
                                 <li><strong>Keperluan:</strong> {{ $tamu->keperluan }}</li>
                                 <li><strong>Jenis Tamu:</strong> {{ $tamu->jenis_tamu }}</li>
+                                @if ($tamu->nama_penerima && $tamu->nama_penerima !== '-')
+                                    <li><strong>Penerima:</strong> {{ $tamu->nama_penerima }}</li>
+                                @endif
+                                <li><strong>Jam:</strong> {{ \Carbon\Carbon::parse($tamu->created_at)->format('H:i') }}</li>
                             </ul>
+
 
                             <form action="{{ route('history.destroy', $tamu->id) }}" method="POST"
                                 onsubmit="return confirm('Yakin ingin menghapus data ini?')">
@@ -47,39 +87,61 @@
                         </div>
                     </div>
                 @endforeach
+                <div class="mt-4 d-flex justify-content-center">
+                    {{ $tamus->withQueryString()->links() }}
+                </div>
+
             </div>
         @endif
-    </div>
+        </div>
 
-    {{-- Custom Styles --}}
-    @push('styles')
-        <style>
-            body {
-                background-color: #f8f9fa;
-            }
+        {{-- Custom Styles --}}
+        @push('styles')
+            <style>
+                body {
+                    background-color: #f8f9fa;
+                }
 
-            .card {
-                transition: all 0.3s ease;
-            }
+                .card {
+                    transition: all 0.3s ease;
+                }
 
-            .card:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
-            }
+                .card:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+                }
 
-            .btn-success {
-                background-color: #28a745;
-                border: none;
-            }
+                .btn-success {
+                    background-color: #28a745;
+                    border: none;
+                }
 
-            .btn-success:hover {
-                background-color: #218838;
-            }
+                .btn-success:hover {
+                    background-color: #218838;
+                }
 
-            .btn-outline-danger:hover {
-                background-color: #dc3545;
-                color: #fff;
-            }
-        </style>
-    @endpush
+                .btn-outline-danger:hover {
+                    background-color: #dc3545;
+                    color: #fff;
+                }
+
+                <style>.pagination {
+                    justify-content: center;
+                }
+
+                .pagination .page-link {
+                    color: #FFBD38;
+                    border: none;
+                    font-weight: 500;
+                }
+
+                .pagination .page-item.active .page-link {
+                    background-color: #FFBD38;
+                    color: #fff;
+                    border-radius: 50px;
+                }
+            </style>
+
+            </style>
+        @endpush
 @endsection

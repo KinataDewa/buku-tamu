@@ -13,8 +13,8 @@ return new class extends Migration {
             $table->string('jenis_tamu');
             $table->string('keperluan');
             $table->string('telepon')->nullable();
-            $table->text('foto')->nullable(); // base64 atau path
-            $table->timestamps(); // created_at, updated_at
+            $table->text('foto')->nullable();
+            $table->timestamps();
         });
     }
 

@@ -10,16 +10,19 @@
                 <i class="bi bi-file-earmark-spreadsheet me-2"></i> Export
             </a>
         </div>
-        <form method="GET" action="{{ route('history') }}" class="row g-2 mb-4">
+        <form method="GET" action="{{ route('history') }}" class="row gy-2 gx-3 align-items-end mb-4">
             <div class="col-md-4">
-                <input type="text" name="search" value="{{ request('search') }}" class="form-control"
-                    placeholder="Cari nama tamu...">
+                <label for="search" class="form-label fw-semibold text-dark">Cari Nama Tamu</label>
+                <input type="text" id="search" name="search" value="{{ request('search') }}" class="form-control"
+                    placeholder="Masukkan nama tamu...">
             </div>
             <div class="col-md-3">
-                <input type="date" name="tanggal" value="{{ request('tanggal') }}" class="form-control">
+                <label for="tanggal" class="form-label fw-semibold text-dark">Tanggal Kunjungan</label>
+                <input type="date" id="tanggal" name="tanggal" value="{{ request('tanggal') }}" class="form-control">
             </div>
             <div class="col-md-3">
-                <select name="jenis_tamu" class="form-select">
+                <label for="jenis_tamu" class="form-label fw-semibold text-dark">Jenis Tamu</label>
+                <select id="jenis_tamu" name="jenis_tamu" class="form-select">
                     <option value="">-- Semua Jenis Tamu --</option>
                     <option value="Tamu Direksi" {{ request('jenis_tamu') == 'Tamu Direksi' ? 'selected' : '' }}>Tamu Direksi
                     </option>
@@ -29,21 +32,20 @@
                         Customer/Owners</option>
                     <option value="Tamu Tenant" {{ request('jenis_tamu') == 'Tamu Tenant' ? 'selected' : '' }}>Tamu Tenant
                     </option>
-                    <option value="Tamu Karyawan" {{ request('jenis_tamu') == 'Tamu Karyawan' ? 'selected' : '' }}>Tamu
-                        Karyawan
+                    <option value="Tamu Karyawan" {{ request('jenis_tamu') == 'Tamu Karyawan' ? 'selected' : '' }}>Tamu Karyawan
                     </option>
                 </select>
             </div>
-            <div class="col-md-2 d-grid">
-                <button class="btn btn-warning text-white" type="submit">
+            <div class="col-md-2 d-grid gap-2">
+                <button class="btn btn-warning text-white fw-semibold" type="submit">
                     <i class="bi bi-funnel me-1"></i> Filter
                 </button>
-                <a href="{{ route('history') }}" class="btn btn-outline-secondary w-100 mt-2">
+                <a href="{{ route('history') }}" class="btn btn-outline-secondary">
                     <i class="bi bi-x-circle me-1"></i> Reset
                 </a>
-
             </div>
         </form>
+
 
 
         @if ($tamus->isEmpty())
@@ -72,8 +74,21 @@
                                 @if ($tamu->nama_penerima && $tamu->nama_penerima !== '-')
                                     <li><strong>Penerima:</strong> {{ $tamu->nama_penerima }}</li>
                                 @endif
-                                <li><strong>Jam:</strong> {{ \Carbon\Carbon::parse($tamu->created_at)->format('H:i') }}</li>
+                                <li><strong>Jam Masuk:</strong> {{ $tamu->jam_kunjungan }}</li>
+                                @if ($tamu->jam_keluar)
+                                    <li><strong>Jam Keluar:</strong> {{ $tamu->jam_keluar }}</li>
+                                @endif
                             </ul>
+
+                            @if (!$tamu->jam_keluar)
+                                <form action="{{ route('history.keluar', $tamu->id) }}" method="POST" class="mb-2">
+                                    @csrf
+                                    <button class="btn btn-outline-primary btn-sm w-100 rounded-pill"
+                                        onclick="return confirm('Tamu akan dicatat sudah keluar?')">
+                                        <i class="bi bi-door-closed me-1"></i> Keluar
+                                    </button>
+                                </form>
+                            @endif
 
 
                             <form action="{{ route('history.destroy', $tamu->id) }}" method="POST"
@@ -140,8 +155,30 @@
                     color: #fff;
                     border-radius: 50px;
                 }
-            </style>
 
+                .form-label {
+                    font-size: 0.95rem;
+                }
+
+                .form-control,
+                .form-select {
+                    border-radius: 0.75rem;
+                    padding: 0.55rem 0.9rem;
+                }
+
+                .btn-warning {
+                    background-color: #FFBD38;
+                    border: none;
+                }
+
+                .btn-warning:hover {
+                    background-color: #e6a300;
+                }
+
+                .btn-outline-secondary:hover {
+                    background-color: #dee2e6;
+                    color: #000;
+                }
             </style>
         @endpush
 @endsection

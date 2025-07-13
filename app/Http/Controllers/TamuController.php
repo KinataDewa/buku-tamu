@@ -107,4 +107,14 @@ class TamuController extends Controller
     {
         return Excel::download(new TamusExport, 'riwayat_buku_tamu.xlsx');
     }
+
+    public function keluar($id)
+    {
+        $tamu = Tamu::findOrFail($id);
+        $tamu->jam_keluar = now()->format('H:i');
+        $tamu->save();
+
+        return redirect()->route('history')->with('success', 'Tamu berhasil keluar.');
+    }
+
 }

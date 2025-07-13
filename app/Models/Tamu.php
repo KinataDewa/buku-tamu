@@ -19,6 +19,7 @@ class Tamu extends Model
         'nama_penerima',
         'tanggal_kunjungan',
         'jam_kunjungan',
+        'jam_keluar'
     ];
 
 }

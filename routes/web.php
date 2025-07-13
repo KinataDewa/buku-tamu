@@ -21,3 +21,6 @@ Route::delete('/history/{id}', [TamuController::class, 'destroy'])->name('histor
 // Route Export Excel
 Route::get('/history/export', [TamuController::class, 'export'])->name('history.export');
 
+Route::post('/history/keluar/{id}', [TamuController::class, 'keluar'])->name('history.keluar');
+
+

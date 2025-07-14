@@ -42,6 +42,10 @@ class TamuController extends Controller
             'dari_pt' => 'nullable|string|max:255',
         ]);
 
+        $request->validate([
+            'nomor_kartu' => 'required|string|unique:tamus,nomor_kartu,NULL,id,jam_keluar,NULL',
+            ]);
+
         // Decode base64 ke file
         if (preg_match('/^data:image\/(\w+);base64,/', $request->foto, $type)) {
             $data = substr($request->foto, strpos($request->foto, ',') + 1);

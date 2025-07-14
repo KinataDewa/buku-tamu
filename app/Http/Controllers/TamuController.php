@@ -38,6 +38,8 @@ class TamuController extends Controller
             'foto' => 'required|string',
             'tanggal_kunjungan' => 'required|date',
             'jam_kunjungan' => 'nullable|string',
+            'nomor_kartu' => 'nullable|string|max:50',
+            'dari_pt' => 'nullable|string|max:255',
         ]);
 
         // Decode base64 ke file
@@ -62,6 +64,8 @@ class TamuController extends Controller
             'foto' => $filename,
             'tanggal_kunjungan' => $request->tanggal_kunjungan,
             'jam_kunjungan' => $request->jam_kunjungan,
+            'nomor_kartu' => $request->nomor_kartu,
+            'dari_pt' => $request->dari_pt ?? '-',
 
         ]);
 

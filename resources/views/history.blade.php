@@ -32,153 +32,158 @@
                         Customer/Owners</option>
                     <option value="Tamu Tenant" {{ request('jenis_tamu') == 'Tamu Tenant' ? 'selected' : '' }}>Tamu Tenant
                     </option>
-                    <option value="Tamu Karyawan" {{ request('jenis_tamu') == 'Tamu Karyawan' ? 'selected' : '' }}>Tamu Karyawan
+                    <option value="Tamu Karyawan" {{ request('jenis_tamu') == 'Tamu Karyawan' ? 'selected' : '' }}>Tamu
+                        Karyawan
                     </option>
-                </select>
-            </div>
-            <div class="col-md-2 d-grid gap-2">
-                <button class="btn btn-warning text-white fw-semibold" type="submit">
-                    <i class="bi bi-funnel me-1"></i> Filter
-                </button>
-                <a href="{{ route('history') }}" class="btn btn-outline-secondary">
-                    <i class="bi bi-x-circle me-1"></i> Reset
-                </a>
-            </div>
-        </form>
+                    </select>
+                    </div>
+                    <div class="col-md-2 d-grid gap-2">
+                        <button class="btn btn-warning text-white fw-semibold" type="submit">
+                            <i class="bi bi-funnel me-1"></i> Filter
+                        </button>
+                        <a href="{{ route('history') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle me-1"></i> Reset
+                        </a>
+                    </div>
+                    </form>
 
 
 
-        @if ($tamus->isEmpty())
-            <div class="alert alert-warning text-center py-4 rounded-4">
-                Belum ada data tamu yang tercatat.
-            </div>
-        @else
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                @foreach ($tamus as $tamu)
-                    <div class="col">
-                        <div class="card h-100 shadow-sm border-0 rounded-4 p-3 bg-white">
-                            <div class="d-flex align-items-center mb-3">
-                                <img src="{{ asset('storage/foto/' . $tamu->foto) }}" class="rounded-circle shadow-sm me-3"
-                                    style="width: 60px; height: 60px; object-fit: cover;">
-                                <div>
-                                    <h6 class="fw-bold mb-0">{{ $tamu->nama_tamu }}</h6>
-                                    <small
-                                        class="text-muted">{{ \Carbon\Carbon::parse($tamu->tanggal_kunjungan)->format('d M Y') }}</small>
+                    @if ($tamus->isEmpty())
+                        <div class="alert alert-warning text-center py-4 rounded-4">
+                            Belum ada data tamu yang tercatat.
+                        </div>
+                    @else
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                            @foreach ($tamus as $tamu)
+                                <div class="col">
+                                    <div class="card h-100 shadow-sm border-0 rounded-4 p-3 bg-white">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <img src="{{ asset('storage/foto/' . $tamu->foto) }}" class="rounded-circle shadow-sm me-3"
+                                                style="width: 60px; height: 60px; object-fit: cover;">
+                                            <div>
+                                                <h6 class="fw-bold mb-0">{{ $tamu->nama_tamu }}</h6>
+                                                <small
+                                                    class="text-muted">{{ \Carbon\Carbon::parse($tamu->tanggal_kunjungan)->format('d M Y') }}</small>
+                                            </div>
+                                        </div>
+
+                                        <ul class="list-unstyled mb-3 small text-dark">
+                                            <li><strong>Telepon:</strong> {{ $tamu->telepon }}</li>
+                                            <li><strong>Keperluan:</strong> {{ $tamu->keperluan }}</li>
+                                            <li><strong>Jenis Tamu:</strong> {{ $tamu->jenis_tamu }}</li>
+                                            <li><strong>Nomor Kartu:</strong> {{ $tamu->nomor_kartu ?? '-' }}</li>
+                                            @if ($tamu->nama_penerima && $tamu->nama_penerima !== '-')
+                                                <li><strong>Penerima:</strong> {{ $tamu->nama_penerima }}</li>
+                                            @endif
+                                            @if ($tamu->dari_pt && $tamu->dari_pt !== '-')
+                                                <li><strong>Asal Perusahaan:</strong> {{ $tamu->dari_pt }}</li>
+                                            @endif
+                                            <li><strong>Jam Masuk:</strong> {{ $tamu->jam_kunjungan }}</li>
+                                            @if ($tamu->jam_keluar)
+                                                <li><strong>Jam Keluar:</strong> {{ $tamu->jam_keluar }}</li>
+                                            @endif
+                                        </ul>
+
+                                        @if (!$tamu->jam_keluar)
+                                            <form action="{{ route('history.keluar', $tamu->id) }}" method="POST" class="mb-2">
+                                                @csrf
+                                                <button class="btn btn-outline-primary btn-sm w-100 rounded-pill"
+                                                    onclick="return confirm('Tamu akan dicatat sudah keluar?')">
+                                                    <i class="bi bi-door-closed me-1"></i> Keluar
+                                                </button>
+                                            </form>
+                                        @endif
+
+
+                                        <form action="{{ route('history.destroy', $tamu->id) }}" method="POST"
+                                            onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-outline-danger btn-sm w-100 rounded-pill">
+                                                <i class="bi bi-trash3 me-1"></i> Hapus
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
+                            @endforeach
+                            <div class="mt-4 d-flex justify-content-center">
+                                {{ $tamus->withQueryString()->links() }}
                             </div>
 
-                            <ul class="list-unstyled mb-3 small text-dark">
-                                <li><strong>Telepon:</strong> {{ $tamu->telepon }}</li>
-                                <li><strong>Keperluan:</strong> {{ $tamu->keperluan }}</li>
-                                <li><strong>Jenis Tamu:</strong> {{ $tamu->jenis_tamu }}</li>
-                                @if ($tamu->nama_penerima && $tamu->nama_penerima !== '-')
-                                    <li><strong>Penerima:</strong> {{ $tamu->nama_penerima }}</li>
-                                @endif
-                                <li><strong>Jam Masuk:</strong> {{ $tamu->jam_kunjungan }}</li>
-                                @if ($tamu->jam_keluar)
-                                    <li><strong>Jam Keluar:</strong> {{ $tamu->jam_keluar }}</li>
-                                @endif
-                            </ul>
-
-                            @if (!$tamu->jam_keluar)
-                                <form action="{{ route('history.keluar', $tamu->id) }}" method="POST" class="mb-2">
-                                    @csrf
-                                    <button class="btn btn-outline-primary btn-sm w-100 rounded-pill"
-                                        onclick="return confirm('Tamu akan dicatat sudah keluar?')">
-                                        <i class="bi bi-door-closed me-1"></i> Keluar
-                                    </button>
-                                </form>
-                            @endif
-
-
-                            <form action="{{ route('history.destroy', $tamu->id) }}" method="POST"
-                                onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-outline-danger btn-sm w-100 rounded-pill">
-                                    <i class="bi bi-trash3 me-1"></i> Hapus
-                                </button>
-                            </form>
                         </div>
-                    </div>
-                @endforeach
-                <div class="mt-4 d-flex justify-content-center">
-                    {{ $tamus->withQueryString()->links() }}
-                </div>
+                    @endif
+                        </div>
 
-            </div>
-        @endif
-        </div>
+                    {{-- Custom Styles --}}
+                    @push('styles')
+                        <style>
+                            body {
+                                background-color: #f8f9fa;
+                            }
 
-        {{-- Custom Styles --}}
-        @push('styles')
-            <style>
-                body {
-                    background-color: #f8f9fa;
-                }
+                                    .card {
+                                        transition: all 0.3s ease;
+                                    }
 
-                .card {
-                    transition: all 0.3s ease;
-                }
+                                    .card:hover {
+                                        transform: translateY(-3px);
+                                        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+                                    }
 
-                .card:hover {
-                    transform: translateY(-3px);
-                    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
-                }
+                                    .btn-success {
+                                        background-color: #28a745;
+                                        border: none;
+                                    }
 
-                .btn-success {
-                    background-color: #28a745;
-                    border: none;
-                }
+                                    .btn-success:hover {
+                                        background-color: #218838;
+                                    }
 
-                .btn-success:hover {
-                    background-color: #218838;
-                }
+                                    .btn-outline-danger:hover {
+                                        background-color: #dc3545;
+                                        color: #fff;
+                                    }
 
-                .btn-outline-danger:hover {
-                    background-color: #dc3545;
-                    color: #fff;
-                }
+                                    <style>.pagination {
+                                        justify-content: center;
+                                    }
 
-                <style>.pagination {
-                    justify-content: center;
-                }
+                                    .pagination .page-link {
+                                        color: #FFBD38;
+                                        border: none;
+                                        font-weight: 500;
+                                    }
 
-                .pagination .page-link {
-                    color: #FFBD38;
-                    border: none;
-                    font-weight: 500;
-                }
+                                    .pagination .page-item.active .page-link {
+                                        background-color: #FFBD38;
+                                        color: #fff;
+                                        border-radius: 50px;
+                                    }
 
-                .pagination .page-item.active .page-link {
-                    background-color: #FFBD38;
-                    color: #fff;
-                    border-radius: 50px;
-                }
+                                    .form-label {
+                                        font-size: 0.95rem;
+                                    }
 
-                .form-label {
-                    font-size: 0.95rem;
-                }
+                                    .form-control,
+                                    .form-select {
+                                        border-radius: 0.75rem;
+                                        padding: 0.55rem 0.9rem;
+                                    }
 
-                .form-control,
-                .form-select {
-                    border-radius: 0.75rem;
-                    padding: 0.55rem 0.9rem;
-                }
+                                    .btn-warning {
+                                        background-color: #FFBD38;
+                                        border: none;
+                                    }
 
-                .btn-warning {
-                    background-color: #FFBD38;
-                    border: none;
-                }
+                                    .btn-warning:hover {
+                                        background-color: #e6a300;
+                                    }
 
-                .btn-warning:hover {
-                    background-color: #e6a300;
-                }
-
-                .btn-outline-secondary:hover {
-                    background-color: #dee2e6;
-                    color: #000;
-                }
-            </style>
-        @endpush
+                                    .btn-outline-secondary:hover {
+                                        background-color: #dee2e6;
+                                        color: #000;
+                                    }
+                                </style>
+                    @endpush
 @endsection

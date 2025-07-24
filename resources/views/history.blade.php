@@ -1,189 +1,108 @@
 @extends('layouts.app')
 
+@section('title', 'Riwayat Buku Tamu')
+
 @section('content')
-    <div class="container my-5" style="font-family: 'Poppins', sans-serif;">
-        <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
-            <h4 class="fw-bold mb-3" style="font-size: 1.75rem;">
-                <span class="text-dark">Riwayat</span> <span style="color: #FFBD38;">Buku Tamu</span>
-            </h4>
-            <a href="{{ route('history.export') }}" class="btn btn-success rounded-pill px-4 py-2">
-                <i class="bi bi-file-earmark-spreadsheet me-2"></i> Export
-            </a>
-        </div>
-        <form method="GET" action="{{ route('history') }}" class="row gy-2 gx-3 align-items-end mb-4">
+<div class="container py-5" style="font-family: 'Poppins', sans-serif;">
+    {{-- Header --}}
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+    <h1 class="page-title mb-4" style="font-family: 'Poppins', sans-serif;">History Buku Tamu</h1>
+
+        <a href="{{ route('history.export') }}" class="btn btn-success rounded-3 px-4">
+            <i class="bi bi-file-earmark-arrow-down me-2"></i> Export
+        </a>
+    </div>
+
+    {{-- Filter --}}
+    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4">
+        <form method="GET" action="{{ route('history') }}" class="row gy-3 gx-4 align-items-end">
             <div class="col-md-4">
-                <label for="search" class="form-label fw-semibold text-dark">Cari Nama Tamu</label>
-                <input type="text" id="search" name="search" value="{{ request('search') }}" class="form-control"
-                    placeholder="Masukkan nama tamu...">
+                <label class="form-label text-muted">Cari Nama</label>
+                <input type="text" name="search" class="form-control rounded-3" placeholder="Masukkan nama tamu..." value="{{ request('search') }}">
             </div>
             <div class="col-md-3">
-                <label for="tanggal" class="form-label fw-semibold text-dark">Tanggal Kunjungan</label>
-                <input type="date" id="tanggal" name="tanggal" value="{{ request('tanggal') }}" class="form-control">
+                <label class="form-label text-muted">Tanggal Kunjungan</label>
+                <input type="date" name="tanggal" class="form-control rounded-3" value="{{ request('tanggal') }}">
             </div>
             <div class="col-md-3">
-                <label for="jenis_tamu" class="form-label fw-semibold text-dark">Jenis Tamu</label>
-                <select id="jenis_tamu" name="jenis_tamu" class="form-select">
-                    <option value="">-- Semua Jenis Tamu --</option>
-                    <option value="Tamu Direksi" {{ request('jenis_tamu') == 'Tamu Direksi' ? 'selected' : '' }}>Tamu Direksi
-                    </option>
-                    <option value="Suplier/Vendor" {{ request('jenis_tamu') == 'Suplier/Vendor' ? 'selected' : '' }}>
-                        Suplier/Vendor</option>
-                    <option value="Customer/Owners" {{ request('jenis_tamu') == 'Customer/Owners' ? 'selected' : '' }}>
-                        Customer/Owners</option>
-                    <option value="Tamu Tenant" {{ request('jenis_tamu') == 'Tamu Tenant' ? 'selected' : '' }}>Tamu Tenant
-                    </option>
-                    <option value="Tamu Karyawan" {{ request('jenis_tamu') == 'Tamu Karyawan' ? 'selected' : '' }}>Tamu
-                        Karyawan
-                    </option>
-                    </select>
+                <label class="form-label text-muted">Jenis Tamu</label>
+                <select name="jenis_tamu" class="form-select rounded-3">
+                    <option value="">Semua Jenis</option>
+                    @foreach (['Tamu Direksi', 'Suplier/Vendor', 'Customer/Owners', 'Tamu Tenant', 'Tamu Karyawan'] as $jenis)
+                        <option value="{{ $jenis }}" {{ request('jenis_tamu') == $jenis ? 'selected' : '' }}>{{ $jenis }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2 d-grid gap-2">
+                <button type="submit" class="btn btn-dark">
+                    <i class="bi bi-filter me-1"></i> Filter
+                </button>
+                <a href="{{ route('history') }}" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    {{-- Data --}}
+    @if ($tamus->isEmpty())
+        <div class="alert alert-warning text-center rounded-4">Belum ada data tamu yang tercatat.</div>
+    @else
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach ($tamus as $tamu)
+            <div class="col">
+                <div class="card border-0 shadow-sm rounded-4 h-100 p-3 bg-white">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{{ asset('storage/foto/' . $tamu->foto) }}"
+                            onerror="this.onerror=null; this.src='{{ asset('img/avatar-default.png') }}';"
+                            class="rounded-3 me-3" style="width: 55px; height: 55px; object-fit: cover;">
+                        <div>
+                            <h6 class="mb-0 fw-bold">{{ $tamu->nama_tamu }}</h6>
+                            <small class="text-muted">{{ \Carbon\Carbon::parse($tamu->tanggal_kunjungan)->format('d M Y') }}</small>
+                        </div>
                     </div>
-                    <div class="col-md-2 d-grid gap-2">
-                        <button class="btn btn-warning text-white fw-semibold" type="submit">
-                            <i class="bi bi-funnel me-1"></i> Filter
-                        </button>
-                        <a href="{{ route('history') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-x-circle me-1"></i> Reset
-                        </a>
+
+                    <ul class="list-unstyled small text-dark mb-3">
+                        <li><i class="bi bi-telephone me-2 text-muted"></i> {{ $tamu->telepon }}</li>
+                        <li><i class="bi bi-person-badge me-2 text-muted"></i> {{ $tamu->jenis_tamu }}</li>
+                        <li><i class="bi bi-card-heading me-2 text-muted"></i> Kartu: <strong>{{ $tamu->nomor_kartu ?? '-' }}</strong></li>
+                        @if ($tamu->dari_pt && $tamu->dari_pt !== '-') <li><i class="bi bi-building me-2 text-muted"></i> {{ $tamu->dari_pt }}</li>@endif
+                        @if ($tamu->nama_penerima && $tamu->nama_penerima !== '-') <li><i class="bi bi-person-check me-2 text-muted"></i> Penerima: {{ $tamu->nama_penerima }}</li>@endif
+                        <li>
+                            <i class="bi bi-clock me-2 text-muted"></i> 
+                            {{ $tamu->jam_kunjungan }} 
+                            @if ($tamu->jam_keluar)
+                                – {{ $tamu->jam_keluar }}
+                            @else
+                                <span class="badge bg-warning text-dark ms-2">Masih di lokasi</span>
+                            @endif
+                        </li>
+                    </ul>
+
+                    <div class="d-flex gap-2">
+                        @if (!$tamu->jam_keluar)
+                            <form method="POST" action="{{ route('history.keluar', $tamu->id) }}">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-primary btn-sm w-100" onclick="return confirm('Tamu akan dicatat sudah keluar?')">
+                                    <i class="bi bi-door-closed me-1"></i> Keluar
+                                </button>
+                            </form>
+                        @endif
+
+                        <form method="POST" action="{{ route('history.destroy', $tamu->id) }}" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-outline-danger btn-sm w-100">
+                                <i class="bi bi-trash3 me-1"></i> Hapus
+                            </button>
+                        </form>
                     </div>
-                    </form>
+                </div>
+            </div>
+            @endforeach
+        </div>
 
-
-
-                    @if ($tamus->isEmpty())
-                        <div class="alert alert-warning text-center py-4 rounded-4">
-                            Belum ada data tamu yang tercatat.
-                        </div>
-                    @else
-                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                            @foreach ($tamus as $tamu)
-                                <div class="col">
-                                    <div class="card h-100 shadow-sm border-0 rounded-4 p-3 bg-white">
-                                        <div class="d-flex align-items-center mb-3">
-                                            <img src="{{ asset('storage/foto/' . $tamu->foto) }}" class="rounded-circle shadow-sm me-3"
-                                                style="width: 60px; height: 60px; object-fit: cover;">
-                                            <div>
-                                                <h6 class="fw-bold mb-0">{{ $tamu->nama_tamu }}</h6>
-                                                <small
-                                                    class="text-muted">{{ \Carbon\Carbon::parse($tamu->tanggal_kunjungan)->format('d M Y') }}</small>
-                                            </div>
-                                        </div>
-
-                                        <ul class="list-unstyled mb-3 small text-dark">
-                                            <li><strong>Telepon:</strong> {{ $tamu->telepon }}</li>
-                                            <li><strong>Keperluan:</strong> {{ $tamu->keperluan }}</li>
-                                            <li><strong>Jenis Tamu:</strong> {{ $tamu->jenis_tamu }}</li>
-                                            <li><strong>Nomor Kartu:</strong> {{ $tamu->nomor_kartu ?? '-' }}</li>
-                                            @if ($tamu->nama_penerima && $tamu->nama_penerima !== '-')
-                                                <li><strong>Penerima:</strong> {{ $tamu->nama_penerima }}</li>
-                                            @endif
-                                            @if ($tamu->dari_pt && $tamu->dari_pt !== '-')
-                                                <li><strong>Asal Perusahaan:</strong> {{ $tamu->dari_pt }}</li>
-                                            @endif
-                                            <li><strong>Jam Masuk:</strong> {{ $tamu->jam_kunjungan }}</li>
-                                            @if ($tamu->jam_keluar)
-                                                <li><strong>Jam Keluar:</strong> {{ $tamu->jam_keluar }}</li>
-                                            @endif
-                                        </ul>
-
-                                        @if (!$tamu->jam_keluar)
-                                            <form action="{{ route('history.keluar', $tamu->id) }}" method="POST" class="mb-2">
-                                                @csrf
-                                                <button class="btn btn-outline-primary btn-sm w-100 rounded-pill"
-                                                    onclick="return confirm('Tamu akan dicatat sudah keluar?')">
-                                                    <i class="bi bi-door-closed me-1"></i> Keluar
-                                                </button>
-                                            </form>
-                                        @endif
-
-
-                                        <form action="{{ route('history.destroy', $tamu->id) }}" method="POST"
-                                            onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-outline-danger btn-sm w-100 rounded-pill">
-                                                <i class="bi bi-trash3 me-1"></i> Hapus
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            @endforeach
-                            <div class="mt-4 d-flex justify-content-center">
-                                {{ $tamus->withQueryString()->links() }}
-                            </div>
-
-                        </div>
-                    @endif
-                        </div>
-
-                    {{-- Custom Styles --}}
-                    @push('styles')
-                        <style>
-                            body {
-                                background-color: #f8f9fa;
-                            }
-
-                                    .card {
-                                        transition: all 0.3s ease;
-                                    }
-
-                                    .card:hover {
-                                        transform: translateY(-3px);
-                                        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
-                                    }
-
-                                    .btn-success {
-                                        background-color: #28a745;
-                                        border: none;
-                                    }
-
-                                    .btn-success:hover {
-                                        background-color: #218838;
-                                    }
-
-                                    .btn-outline-danger:hover {
-                                        background-color: #dc3545;
-                                        color: #fff;
-                                    }
-
-                                    <style>.pagination {
-                                        justify-content: center;
-                                    }
-
-                                    .pagination .page-link {
-                                        color: #FFBD38;
-                                        border: none;
-                                        font-weight: 500;
-                                    }
-
-                                    .pagination .page-item.active .page-link {
-                                        background-color: #FFBD38;
-                                        color: #fff;
-                                        border-radius: 50px;
-                                    }
-
-                                    .form-label {
-                                        font-size: 0.95rem;
-                                    }
-
-                                    .form-control,
-                                    .form-select {
-                                        border-radius: 0.75rem;
-                                        padding: 0.55rem 0.9rem;
-                                    }
-
-                                    .btn-warning {
-                                        background-color: #FFBD38;
-                                        border: none;
-                                    }
-
-                                    .btn-warning:hover {
-                                        background-color: #e6a300;
-                                    }
-
-                                    .btn-outline-secondary:hover {
-                                        background-color: #dee2e6;
-                                        color: #000;
-                                    }
-                                </style>
-                    @endpush
+        <div class="mt-4 d-flex justify-content-center">
+            {{ $tamus->withQueryString()->links() }}
+        </div>
+    @endif
+</div>
 @endsection

@@ -11,30 +11,42 @@ class TamusExport implements FromCollection, WithHeadings, WithMapping
 {
     public function collection()
     {
-        return Tamu::all();
+        return Tamu::latest()->get(); // Lebih baik agar data terbaru di atas
     }
 
     public function headings(): array
     {
         return [
+            'No',
             'Nama Tamu',
             'Nama Penerima',
             'Telepon',
-            'Tanggal Kunjungan',
-            'Keperluan',
+            'Instansi / Perusahaan',
+            'Nomor Kartu',
             'Jenis Tamu',
+            'Keperluan',
+            'Tanggal Kunjungan',
+            'Waktu Datang',
+            'Waktu Pulang',
+            'Foto',
         ];
     }
 
     public function map($tamu): array
     {
         return [
+            $tamu->id,
             $tamu->nama_tamu,
             $tamu->nama_penerima,
             $tamu->telepon,
-            $tamu->tanggal_kunjungan ? \Carbon\Carbon::parse($tamu->tanggal_kunjungan)->format('d-m-Y') : '',
-            $tamu->keperluan,
+            $tamu->instansi ?? $tamu->asal_perusahaan ?? '-', // tergantung field mana yang digunakan
+            $tamu->nomor_kartu ?? '-',
             $tamu->jenis_tamu,
+            $tamu->keperluan,
+            optional($tamu->tanggal_kunjungan)->format('d-m-Y'),
+            optional($tamu->jam_datang)->format('H:i'),
+            optional($tamu->jam_pulang)->format('H:i'),
+            $tamu->foto ? asset('storage/foto/' . $tamu->foto) : '-',
         ];
     }
 }

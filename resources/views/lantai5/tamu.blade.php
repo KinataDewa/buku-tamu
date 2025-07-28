@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container py-5" style="font-family: 'Poppins', sans-serif;">
-    <h1 class="page-title mb-4">Daftar Tamu di Lokasi (Lantai 5)</h1>
+    <h1 class="page-title mb-4">Daftar Tamu di Lokasi</h1>
 
     @if ($tamus->isEmpty())
         <div class="alert alert-warning text-center rounded-4">Belum ada tamu di lokasi saat ini.</div>
@@ -48,13 +48,6 @@
                     </ul>
 
                     @if (!$tamu->jam_keluar)
-                        <form method="POST" action="{{ route('history.keluar', $tamu->id) }}">
-                            @csrf
-                            <button type="submit" class="btn btn-outline-primary btn-sm w-100"
-                                onclick="return confirm('Tamu akan dicatat sudah keluar?')">
-                                <i class="bi bi-door-closed me-1"></i> Keluar
-                            </button>
-                        </form>
                     @endif
                 </div>
             </div>

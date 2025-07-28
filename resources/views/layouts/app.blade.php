@@ -106,66 +106,67 @@
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-custom shadow-sm sticky-top">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('dashboard') }}">
-                <img src="{{ asset('images/logo2.png') }}" alt="Logo" height="26">
-                <span class="fw-semibold fs-5 mb-0" style="letter-spacing: 0.5px;">Buku Tamu</span>
-            </a>
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('dashboard') }}">
+            <img src="{{ asset('images/logo2.png') }}" alt="Logo" height="26">
+            <span class="fw-semibold fs-5 mb-0" style="letter-spacing: 0.5px;">Buku Tamu</span>
+        </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav gap-2">
-                    @auth
-                        {{-- Dashboard untuk semua user --}}
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav gap-2">
+                @auth
+                    {{-- Menu untuk resepsionis_ground --}}
+                    @if(auth()->user()->role === 'resepsionis_ground')
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('dashboard') ? 'fw-bold' : '' }}" href="{{ route('dashboard') }}">
+                            <a class="nav-link {{ request()->routeIs('dashboard') ? 'fw-bold' : '' }}" 
+                               href="{{ route('dashboard') }}">
                                 <i class="bi bi-speedometer2"></i> Dashboard
                             </a>
                         </li>
-
-                        {{-- Form Tamu hanya untuk resepsionis_ground --}}
-                        @if(auth()->user()->role === 'resepsionis_ground')
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('form') ? 'fw-bold' : '' }}" href="{{ route('form') }}">
-                                    <i class="bi bi-pencil-square"></i> Form Tamu
-                                </a>
-                            </li>
-                        @endif
-
-                        {{-- Tamu Lantai 5 hanya untuk resepsionis_lantai5 --}}
-                        @if(auth()->user()->role === 'resepsionis_lantai5')
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('lantai5.tamu') ? 'fw-bold' : '' }}" href="{{ route('lantai5.tamu') }}">
-                                    <i class="bi bi-people"></i> Tamu
-                                </a>
-                            </li>
-                        @endif
-
-                        {{-- Riwayat untuk semua user --}}
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('history') ? 'fw-bold' : '' }}" href="{{ route('history') }}">
+                            <a class="nav-link {{ request()->routeIs('form') ? 'fw-bold' : '' }}" 
+                               href="{{ route('form') }}">
+                                <i class="bi bi-pencil-square"></i> Form Tamu
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('history') ? 'fw-bold' : '' }}" 
+                               href="{{ route('history') }}">
                                 <i class="bi bi-clock-history"></i> Riwayat
                             </a>
                         </li>
+                    @endif
 
-                        {{-- Logout --}}
+                    {{-- Menu untuk resepsionis_lantai5 --}}
+                    @if(auth()->user()->role === 'resepsionis_lantai5')
                         <li class="nav-item">
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="nav-link btn btn-link">
-                                    <i class="bi bi-box-arrow-right"></i> Logout
-                                </button>
-                            </form>
+                            <a class="nav-link {{ request()->routeIs('lantai5.tamu') ? 'fw-bold' : '' }}" 
+                               href="{{ route('lantai5.tamu') }}">
+                                <i class="bi bi-people"></i> Tamu
+                            </a>
                         </li>
-                    @endauth
-                </ul>
-            </div>
+                    @endif
+
+                    {{-- Logout untuk semua user --}}
+                    <li class="nav-item">
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="nav-link btn btn-link">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                @endauth
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
+
     <!-- End Navbar -->
 
     @yield('content')

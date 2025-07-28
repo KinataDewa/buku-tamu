@@ -31,7 +31,7 @@ class TamuController extends Controller
         // Validasi dasar
         $request->validate([
             'keperluan' => 'required|string',
-            'jenis_tamu' => 'nullable|string',
+            'jenis_tamu' => 'required|string',
             'nama_tamu' => 'required|string|max:255',
             'telepon' => 'required|string|max:20',
             'nama_penerima' => 'nullable|string|max:255',
@@ -133,6 +133,28 @@ class TamuController extends Controller
                 ->paginate(12);
 
     return view('lantai5.tamu', compact('tamus'));
+}
+
+// 🔥 Tamu Direksi (jenis_tamu = "Tamu Direksi")
+public function direksiTamu()
+{
+    $tamus = Tamu::whereNull('jam_keluar')
+                ->where('jenis_tamu', 'Tamu Direksi')
+                ->orderBy('tanggal_kunjungan', 'desc')
+                ->paginate(12);
+
+    return view('direksi.tamu', compact('tamus'));
+}
+
+// 🔥 Tamu Tukar Faktur (keperluan = "FAT")
+public function tukarFakturTamu()
+{
+    $tamus = Tamu::whereNull('jam_keluar')
+                ->where('keperluan', 'FAT')
+                ->orderBy('tanggal_kunjungan', 'desc')
+                ->paginate(12);
+
+    return view('tukarfaktur.tamu', compact('tamus'));
 }
 
 }

@@ -10,12 +10,18 @@ Route::middleware('guest')->get('/', function () {
     return redirect()->route('login');
 });
 
-// 🔥 Cek role user setelah login
+// Redirect setelah login
 Route::middleware('auth')->get('/', function () {
-    if (Auth::user()->role === 'resepsionis_lantai5') {
-        return redirect()->route('lantai5.tamu'); // langsung ke tamu lantai 5
+    $role = Auth::user()->role;
+
+    if ($role === 'resepsionis_lantai5') {
+        return redirect()->route('lantai5.tamu');
+    } elseif ($role === 'direksi') {
+        return redirect()->route('direksi.tamu');
+    } elseif ($role === 'tukarfaktur') {
+        return redirect()->route('tukarfaktur.tamu');
     }
-    return redirect()->route('dashboard'); // selain itu ke dashboard
+    return redirect()->route('dashboard'); // default resepsionis_ground
 });
 
 Route::middleware('auth')->group(function () {
@@ -50,10 +56,16 @@ Route::middleware(['auth', 'role:resepsionis_lantai5'])->group(function () {
     Route::get('/lantai5/tamu', [TamuController::class, 'lantai5Tamu'])->name('lantai5.tamu');
 });
 
+// 🔥 Route khusus Direksi
+Route::middleware(['auth', 'role:direksi'])->group(function () {
+    Route::get('/direksi/tamu', [TamuController::class, 'direksiTamu'])->name('direksi.tamu');
+});
 
-Route::middleware(['auth', 'role:direksi'])->get('/direksi/tamu', [TamuController::class, 'tamuDireksi'])->name('direksi.tamu');
+// 🔥 Route khusus Tukar Faktur
+Route::middleware(['auth', 'role:tukarfaktur'])->group(function () {
+    Route::get('/tukarfaktur/tamu', [TamuController::class, 'tukarFakturTamu'])->name('tukarfaktur.tamu');
+});
 
-Route::middleware(['auth', 'role:tukar_faktur'])->get('/faktur/tamu', [TamuController::class, 'tamuFaktur'])->name('faktur.tamu');
 
 // Auth routes Breeze
 require __DIR__.'/auth.php';

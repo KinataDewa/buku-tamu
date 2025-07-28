@@ -51,6 +51,20 @@
             @enderror
         </div>
 
+        {{-- Role --}}
+        <div class="mb-3">
+            <label for="role" class="form-label">Role</label>
+            <select id="role" name="role" class="form-select @error('role') is-invalid @enderror" required>
+                <option value="resepsionis_ground">Resepsionis Ground</option>
+                <option value="resepsionis_lantai5">Resepsionis Lantai 5</option>
+                <option value="direksi">Direksi</option>
+                <option value="tukarfaktur">Tukar Faktur</option>
+            </select>
+            @error('role')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
         {{-- Actions --}}
         <div class="d-flex justify-content-between align-items-center mt-4">
             <a class="text-decoration-none text-secondary" href="{{ route('login') }}">

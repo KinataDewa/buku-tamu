@@ -17,11 +17,17 @@
             @enderror
         </div>
 
-        {{-- Password --}}
-        <div class="mb-3">
+        {{-- Password + Toggle --}}
+        <div class="mb-3 position-relative">
             <label for="password" class="form-label">Password</label>
-            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
-                   name="password" required placeholder="Masukkan password">
+            <div class="input-group">
+                <input id="password" type="password"
+                       class="form-control @error('password') is-invalid @enderror"
+                       name="password" required placeholder="Masukkan password">
+                <button type="button" class="btn btn-outline-light" id="togglePassword">
+                    <i class="bi bi-eye"></i>
+                </button>
+            </div>
             @error('password')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -56,4 +62,19 @@
             </div>
         @endif
     </form>
+
+    {{-- Script Toggle Password --}}
+    <script>
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            // Ganti ikon mata
+            this.querySelector('i').classList.toggle('bi-eye');
+            this.querySelector('i').classList.toggle('bi-eye-slash');
+        });
+    </script>
 </x-guest-layout>

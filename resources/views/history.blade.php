@@ -28,7 +28,7 @@
                 <label class="form-label text-muted">Jenis Tamu</label>
                 <select name="jenis_tamu" class="form-select rounded-3">
                     <option value="">Semua Jenis</option>
-                    @foreach (['Tamu Direksi', 'Suplier/Vendor', 'Customer/Owners', 'Tamu Tenant', 'Tamu Karyawan'] as $jenis)
+                    @foreach (['Tamu Direksi', 'Suplier/Vendor', 'Customer/Owners', 'Tamu Tenant', 'Tamu Karyawan SUA'] as $jenis)
                         <option value="{{ $jenis }}" {{ request('jenis_tamu') == $jenis ? 'selected' : '' }}>{{ $jenis }}</option>
                     @endforeach
                 </select>

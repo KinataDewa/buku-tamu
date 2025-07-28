@@ -6,7 +6,7 @@
 <div class="container py-5" style="font-family: 'Poppins', sans-serif;">
     {{-- Header --}}
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
-    <h1 class="page-title mb-4" style="font-family: 'Poppins', sans-serif;">History Buku Tamu</h1>
+        <h1 class="page-title mb-4" style="font-family: 'Poppins', sans-serif;">History Buku Tamu</h1>
 
         <a href="{{ route('history.export') }}" class="btn btn-success rounded-3 px-4">
             <i class="bi bi-file-earmark-arrow-down me-2"></i> Export
@@ -51,9 +51,12 @@
             <div class="col">
                 <div class="card border-0 shadow-sm rounded-4 h-100 p-3 bg-white">
                     <div class="d-flex align-items-center mb-3">
+                        <!-- Foto tamu dengan popup modal -->
                         <img src="{{ asset('storage/foto/' . $tamu->foto) }}"
                             onerror="this.onerror=null; this.src='{{ asset('img/avatar-default.png') }}';"
-                            class="rounded-3 me-3" style="width: 55px; height: 55px; object-fit: cover;">
+                            class="rounded-3 me-3"
+                            style="width: 55px; height: 55px; object-fit: cover; cursor:pointer"
+                            data-bs-toggle="modal" data-bs-target="#fotoModal{{ $tamu->id }}">
                         <div>
                             <h6 class="mb-0 fw-bold">{{ $tamu->nama_tamu }}</h6>
                             <small class="text-muted">{{ \Carbon\Carbon::parse($tamu->tanggal_kunjungan)->format('d M Y') }}</small>
@@ -64,8 +67,12 @@
                         <li><i class="bi bi-telephone me-2 text-muted"></i> {{ $tamu->telepon }}</li>
                         <li><i class="bi bi-person-badge me-2 text-muted"></i> {{ $tamu->jenis_tamu }}</li>
                         <li><i class="bi bi-card-heading me-2 text-muted"></i> Kartu: <strong>{{ $tamu->nomor_kartu ?? '-' }}</strong></li>
-                        @if ($tamu->dari_pt && $tamu->dari_pt !== '-') <li><i class="bi bi-building me-2 text-muted"></i> {{ $tamu->dari_pt }}</li>@endif
-                        @if ($tamu->nama_penerima && $tamu->nama_penerima !== '-') <li><i class="bi bi-person-check me-2 text-muted"></i> Penerima: {{ $tamu->nama_penerima }}</li>@endif
+                        @if ($tamu->dari_pt && $tamu->dari_pt !== '-') 
+                            <li><i class="bi bi-building me-2 text-muted"></i> {{ $tamu->dari_pt }}</li>
+                        @endif
+                        @if ($tamu->nama_penerima && $tamu->nama_penerima !== '-') 
+                            <li><i class="bi bi-person-check me-2 text-muted"></i> Penerima: {{ $tamu->nama_penerima }}</li>
+                        @endif
                         <li>
                             <i class="bi bi-clock me-2 text-muted"></i> 
                             {{ $tamu->jam_kunjungan }} 
@@ -94,6 +101,23 @@
                                 <i class="bi bi-trash3 me-1"></i> Hapus
                             </button>
                         </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Foto Tamu -->
+            <div class="modal fade" id="fotoModal{{ $tamu->id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-header">
+                            <h5 class="modal-title">{{ $tamu->nama_tamu }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img src="{{ asset('storage/foto/' . $tamu->foto) }}"
+                                onerror="this.onerror=null; this.src='{{ asset('img/avatar-default.png') }}';"
+                                class="img-fluid rounded-3">
+                        </div>
                     </div>
                 </div>
             </div>

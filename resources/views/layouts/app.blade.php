@@ -23,33 +23,74 @@
             font-family: 'Poppins', sans-serif;
             background-color: #f8f9fa;
         }
+
         .navbar-custom {
             background-color: #fff;
             border-bottom: 1px solid #dee2e6;
         }
+
         .navbar-brand {
             font-weight: 700;
             color: #000 !important;
         }
+
         .nav-link {
             color: #000 !important;
             font-weight: 500;
             transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
         }
+
         .nav-link:hover,
         .nav-link.fw-bold {
             color: #FFBD38 !important;
         }
+
+        .navbar-nav .nav-item {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Samakan style Logout button dengan nav-link */
+        .navbar-nav .nav-link.btn-link {
+            color: #000 !important;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: none;
+            border: none;
+            text-align: left;
+        }
+
+        .navbar-nav .nav-link.btn-link:hover {
+            color: #FFBD38 !important;
+            text-decoration: none;
+        }
+
+        .navbar-nav form {
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar-nav i {
+            font-size: 1rem;
+            line-height: 1;
+        }
+
         .page-title {
             font-weight: 700;
             font-size: 1.75rem;
             color: #343a40;
             margin-bottom: 1.5rem;
-            border-left: 5px solid #ffbd38;
+            border-left: 5px solid #FFBD38;
             padding-left: 1rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.06); /* Lebih dalam, masih halus */
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
         }
-
 
         .btn-warning {
             background-color: #FFBD38;
@@ -62,34 +103,70 @@
 </head>
 
 <body>
+
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-custom shadow-sm sticky-top">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('dashboard') }}">
-            <img src="{{ asset('images/logo2.png') }}" alt="Logo" height="26">
-            <span class="fw-semibold fs-5 mb-0" style="letter-spacing: 0.5px;">Buku Tamu</span>
-        </a>
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('dashboard') }}">
+                <img src="{{ asset('images/logo2.png') }}" alt="Logo" height="26">
+                <span class="fw-semibold fs-5 mb-0" style="letter-spacing: 0.5px;">Buku Tamu</span>
+            </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav gap-2">
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('form') ? 'fw-bold' : '' }}" href="{{ route('form') }}">
-                        <i class="bi bi-pencil-square me-1"></i> Form Tamu
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('history') ? 'fw-bold' : '' }}" href="{{ route('history') }}">
-                        <i class="bi bi-clock-history me-1"></i> Riwayat
-                    </a>
-                </li>
-            </ul>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav gap-2">
+                    @auth
+                        {{-- Dashboard untuk semua user --}}
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('dashboard') ? 'fw-bold' : '' }}" href="{{ route('dashboard') }}">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+
+                        {{-- Form Tamu hanya untuk resepsionis_ground --}}
+                        @if(auth()->user()->role === 'resepsionis_ground')
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('form') ? 'fw-bold' : '' }}" href="{{ route('form') }}">
+                                    <i class="bi bi-pencil-square"></i> Form Tamu
+                                </a>
+                            </li>
+                        @endif
+
+                        {{-- Tamu Lantai 5 hanya untuk resepsionis_lantai5 --}}
+                        @if(auth()->user()->role === 'resepsionis_lantai5')
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('lantai5.tamu') ? 'fw-bold' : '' }}" href="{{ route('lantai5.tamu') }}">
+                                    <i class="bi bi-people"></i> Tamu
+                                </a>
+                            </li>
+                        @endif
+
+                        {{-- Riwayat untuk semua user --}}
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('history') ? 'fw-bold' : '' }}" href="{{ route('history') }}">
+                                <i class="bi bi-clock-history"></i> Riwayat
+                            </a>
+                        </li>
+
+                        {{-- Logout --}}
+                        <li class="nav-item">
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="nav-link btn btn-link">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </button>
+                            </form>
+                        </li>
+                    @endauth
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
+    <!-- End Navbar -->
 
     @yield('content')
 

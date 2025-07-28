@@ -125,4 +125,14 @@ class TamuController extends Controller
         return redirect()->route('history')->with('success', 'Tamu berhasil keluar.');
     }
 
+    public function lantai5Tamu()
+{
+    // Ambil tamu yang masih di lokasi (jam_keluar = null)
+    $tamus = Tamu::whereNull('jam_keluar')
+                ->orderBy('tanggal_kunjungan', 'desc')
+                ->paginate(12);
+
+    return view('lantai5.tamu', compact('tamus'));
+}
+
 }

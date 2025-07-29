@@ -11,16 +11,30 @@ use Carbon\Carbon;
 
 class TamuController extends Controller
 {
+    // public function dashboard()
+    // {
+    //     $hariIni = Tamu::whereDate('created_at', Carbon::today())->count();
+    //     $mingguIni = Tamu::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
+    //     $bulanIni = Tamu::whereMonth('created_at', Carbon::now()->month)->count();
+    //     $total = Tamu::count();
+
+    //     return view('dashboard', compact('hariIni', 'mingguIni', 'bulanIni', 'total'));
+    // }
     public function dashboard()
     {
-        $hariIni = Tamu::whereDate('created_at', Carbon::today())->count();
-        $mingguIni = Tamu::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
-        $bulanIni = Tamu::whereMonth('created_at', Carbon::now()->month)->count();
-        $total = Tamu::count();
+        $jenisStats = [
+            'Tamu Direksi' => Tamu::whereNull('jam_keluar')->where('jenis_tamu', 'Tamu Direksi')->count(),
+            'Suplier/Vendor' => Tamu::whereNull('jam_keluar')->where('jenis_tamu', 'Suplier/Vendor')->count(),
+            'Customer/Owners' => Tamu::whereNull('jam_keluar')->where('jenis_tamu', 'Customer/Owners')->count(),
+            'Tamu Tenant' => Tamu::whereNull('jam_keluar')->where('jenis_tamu', 'Tamu Tenant')->count(),
+            'Tamu Karyawan SUA' => Tamu::whereNull('jam_keluar')->where('jenis_tamu', 'Tamu Karyawan SUA')->count(),
+        ];
 
-        return view('dashboard', compact('hariIni', 'mingguIni', 'bulanIni', 'total'));
+        return view('dashboard', compact('jenisStats'));
     }
 
+
+    //Form
     public function form()
     {
         return view('form');
@@ -76,6 +90,7 @@ class TamuController extends Controller
         return redirect()->route('dashboard')->with('success', 'Data berhasil disimpan!');
     }
 
+
     public function history(Request $request)
     {
         $query = Tamu::query();
@@ -111,10 +126,12 @@ class TamuController extends Controller
         return redirect()->route('history')->with('success', 'Data berhasil dihapus!');
     }
 
+
     public function export()
     {
         return Excel::download(new TamusExport, 'riwayat_buku_tamu.xlsx');
     }
+
 
     public function keluar($id)
     {
@@ -125,36 +142,37 @@ class TamuController extends Controller
         return redirect()->route('history')->with('success', 'Tamu berhasil keluar.');
     }
 
+
     public function lantai5Tamu()
-{
-    // Ambil tamu yang masih di lokasi (jam_keluar = null)
-    $tamus = Tamu::whereNull('jam_keluar')
-                ->orderBy('tanggal_kunjungan', 'desc')
-                ->paginate(12);
+    {
+        // Ambil tamu yang masih di lokasi (jam_keluar = null)
+        $tamus = Tamu::whereNull('jam_keluar')
+                    ->orderBy('tanggal_kunjungan', 'desc')
+                    ->paginate(12);
 
-    return view('lantai5.tamu', compact('tamus'));
-}
+        return view('lantai5.tamu', compact('tamus'));
+    }
 
-// 🔥 Tamu Direksi (jenis_tamu = "Tamu Direksi")
-public function direksiTamu()
-{
-    $tamus = Tamu::whereNull('jam_keluar')
-                ->where('jenis_tamu', 'Tamu Direksi')
-                ->orderBy('tanggal_kunjungan', 'desc')
-                ->paginate(12);
+    // 🔥 Tamu Direksi (jenis_tamu = "Tamu Direksi")
+    public function direksiTamu()
+    {
+        $tamus = Tamu::whereNull('jam_keluar')
+                    ->where('jenis_tamu', 'Tamu Direksi')
+                    ->orderBy('tanggal_kunjungan', 'desc')
+                    ->paginate(12);
 
-    return view('direksi.tamu', compact('tamus'));
-}
+        return view('direksi.tamu', compact('tamus'));
+    }
 
-// 🔥 Tamu Tukar Faktur (keperluan = "FAT")
-public function tukarFakturTamu()
-{
-    $tamus = Tamu::whereNull('jam_keluar')
-                ->where('keperluan', 'FAT')
-                ->orderBy('tanggal_kunjungan', 'desc')
-                ->paginate(12);
+    // 🔥 Tamu Tukar Faktur (keperluan = "FAT")
+    public function tukarFakturTamu()
+    {
+        $tamus = Tamu::whereNull('jam_keluar')
+                    ->where('keperluan', 'FAT')
+                    ->orderBy('tanggal_kunjungan', 'desc')
+                    ->paginate(12);
 
-    return view('tukarfaktur.tamu', compact('tamus'));
-}
+        return view('tukarfaktur.tamu', compact('tamus'));
+    }
 
 }

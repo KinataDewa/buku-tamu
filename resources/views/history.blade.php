@@ -86,21 +86,21 @@
 
                     <div class="d-flex gap-2">
                         @if (!$tamu->jam_keluar)
-                            <form method="POST" action="{{ route('history.keluar', $tamu->id) }}">
+                            <form method="POST" action="{{ route('history.keluar', $tamu->id) }}" class="formKeluar">
                                 @csrf
-                                <button type="submit" class="btn btn-outline-primary btn-sm w-100" onclick="return confirm('Tamu akan dicatat sudah keluar?')">
+                                <button type="button" class="btn btn-outline-primary btn-sm w-100 btnKeluar">
                                     <i class="bi bi-door-closed me-1"></i> Keluar
                                 </button>
                             </form>
                         @endif
 
-                        <form method="POST" action="{{ route('history.destroy', $tamu->id) }}" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                        {{-- <form method="POST" action="{{ route('history.destroy', $tamu->id) }}" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-outline-danger btn-sm w-100">
                                 <i class="bi bi-trash3 me-1"></i> Hapus
                             </button>
-                        </form>
+                        </form> --}}
                     </div>
                 </div>
             </div>
@@ -130,3 +130,53 @@
     @endif
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-danger"
+        },
+        buttonsStyling: false
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.btnKeluar').forEach(function(btn){
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const form = this.closest('.formKeluar');
+
+                swalWithBootstrapButtons.fire({
+                    title: "Tandai Tamu Keluar?",
+                    text: "Data tamu akan dicatat sudah keluar.",
+                    icon: "warning",
+                    width: '360px',
+                    showCancelButton: true,
+                    confirmButtonText: "Ya, keluar!",
+                    cancelButtonText: "Batal",
+                    reverseButtons: true,
+                    didRender: () => {
+                        const buttons = document.querySelectorAll('.swal2-actions .btn');
+                        if (buttons.length === 2) {
+                            buttons[0].style.marginRight = '10px';
+                        }
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        swalWithBootstrapButtons.fire({
+                            title: "Dibatalkan",
+                            text: "Tamu tidak jadi dicatat keluar.",
+                            icon: "error",
+                            width: '360px',
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
+@endpush
+

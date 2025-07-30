@@ -28,9 +28,9 @@
 
         /* Left panel */
         .left-panel {
-            flex: 1;
+            flex: 1.5;
             position: relative;
-            background: url('{{ asset('images/bg3.jpg') }}') no-repeat center center/cover;
+            background: url('{{ asset('images/bg7.jpg') }}') no-repeat center center/cover;
             display: flex;
             align-items: center;
             justify-content: center;

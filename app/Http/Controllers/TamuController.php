@@ -28,6 +28,7 @@ class TamuController extends Controller
             'Customer/Owners' => Tamu::whereNull('jam_keluar')->where('jenis_tamu', 'Customer/Owners')->count(),
             'Tamu Tenant' => Tamu::whereNull('jam_keluar')->where('jenis_tamu', 'Tamu Tenant')->count(),
             'Tamu Karyawan SUA' => Tamu::whereNull('jam_keluar')->where('jenis_tamu', 'Tamu Karyawan SUA')->count(),
+            'FAT' => Tamu::whereNull('jam_keluar')->where('keperluan', 'FAT')->count(),
         ];
 
         return view('dashboard', compact('jenisStats'));

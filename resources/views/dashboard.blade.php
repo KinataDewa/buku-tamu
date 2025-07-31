@@ -144,7 +144,7 @@
         .card-stat[data-jenis="Tamu Tenant"] .fs-4 { color: #20c997; }       /* Hijau */
         .card-stat[data-jenis="Suplier/Vendor"] .fs-4 { color: #ffc107; }    /* Kuning */
         .card-stat[data-jenis="Tamu Karyawan SUA"] .fs-4 { color: #fd7e14; } /* Oranye */
-        .card-stat[data-jenis="Lainnya"] .fs-4 { color: #6f42c1; }           /* Ungu */
+        .card-stat[data-jenis="FAT"] .fs-4 { color: #6f42c1; }           /* Ungu */
 
         @media (max-width: 768px) {
             .card-stat .fs-4 {

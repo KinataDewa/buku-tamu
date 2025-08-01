@@ -107,7 +107,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-custom shadow-sm sticky-top">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('dashboard') }}">
+        <a class="navbar-brand d-flex align-items-center gap-2">
             <img src="{{ asset('images/logo2.png') }}" alt="Logo" height="26">
             <span class="fw-semibold fs-5 mb-0" style="letter-spacing: 0.5px;">Buku Tamu</span>
         </a>

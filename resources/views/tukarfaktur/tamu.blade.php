@@ -7,9 +7,11 @@
     <h1 class="page-title mb-4">Daftar Tamu Tukar Faktur (FAT)</h1>
 
     @if ($tamus->isEmpty())
-        <div class="alert alert-warning text-center rounded-4">
-            Belum ada tamu tukar faktur di lokasi saat ini.
-        </div>
+        <div class="alert border-0 shadow-sm d-flex align-items-center justify-content-center gap-3 bg-white text-muted py-4 px-4 rounded-4 text-center" style="border-left: 5px solid #FFBD38;">
+            <i class="bi bi-exclamation-circle-fill fs-4 text-warning"></i>
+            <span class="fw-semibold fs-6">
+                Belum ada tamu tukar faktur di lokasi saat ini.
+            </span></div>
     @else
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             @foreach ($tamus as $tamu)

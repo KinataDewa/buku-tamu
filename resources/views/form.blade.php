@@ -115,7 +115,7 @@
             {{-- ✅ Kolom Kiri --}}
             <div class="col-12 col-lg-6">
                 <div class="form-wrapper h-100">
-                    <h5 class="section-title">👤 Data Tamu</h5>
+                    <h5 class="section-title">Data Tamu</h5>
 
                     <div class="mb-3">
                         <label class="form-label">Nama Tamu</label>
@@ -127,7 +127,7 @@
                         <input type="tel" class="form-control" name="telepon" placeholder="08xxxxxxxxxx" required>
                     </div>
 
-                    <h5 class="section-title mt-4">📌 Data Kunjungan</h5>
+                    <h5 class="section-title mt-4">Data Kunjungan</h5>
                     <div class="mb-3">
                         <label class="form-label">Pilih Keperluan</label>
                         <select class="form-select" name="keperluan" id="keperluan" required onchange="handleKeperluanChange()">
@@ -166,7 +166,7 @@
             {{-- ✅ Kolom Kanan --}}
             <div class="col-12 col-lg-6">
                 <div class="form-wrapper h-100">
-                    <h5 class="section-title">📷 Ambil Foto</h5>
+                    <h5 class="section-title">Ambil Foto</h5>
 
                     <video id="video" autoplay playsinline class="w-100 mb-2"
                         style="max-height: 240px; display:none; border-radius: 12px; transform: scaleX(-1);"></video>

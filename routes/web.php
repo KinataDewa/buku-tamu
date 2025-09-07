@@ -5,6 +5,7 @@ use App\Http\Controllers\TamuController;
 use App\Http\Controllers\Lantai5Controller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\EventController;
 
 Route::middleware('guest')->get('/', function () {
     return redirect()->route('login');
@@ -51,19 +52,40 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-// 🔥 Route khusus lantai 5
+// Route khusus lantai 5
 Route::middleware(['auth', 'role:resepsionis_lantai5'])->group(function () {
     Route::get('/lantai5/tamu', [TamuController::class, 'lantai5Tamu'])->name('lantai5.tamu');
 });
 
-// 🔥 Route khusus Direksi
+// Route khusus Direksi
 Route::middleware(['auth', 'role:direksi'])->group(function () {
     Route::get('/direksi/tamu', [TamuController::class, 'direksiTamu'])->name('direksi.tamu');
 });
 
-// 🔥 Route khusus Tukar Faktur
+// Route khusus Tukar Faktur
 Route::middleware(['auth', 'role:tukarfaktur'])->group(function () {
     Route::get('/tukarfaktur/tamu', [TamuController::class, 'tukarFakturTamu'])->name('tukarfaktur.tamu');
+});
+
+Route::prefix('events')->name('events.')->group(function () {
+    // 1. Daftar semua event
+    Route::get('/', [EventController::class, 'index'])->name('index');
+
+    // 2. Form tambah event
+    Route::get('/create', [EventController::class, 'create'])->name('create');
+    Route::post('/store', [EventController::class, 'store'])->name('store');
+
+    // 3. Lihat daftar tamu per event
+    Route::get('/{event_id}/guests', [EventController::class, 'guests'])->name('guests');
+
+    // 4. Tandai kehadiran tamu
+    Route::post('/guests/{guest_id}/attendance', [EventController::class, 'markAttendance'])->name('guests.attendance');
+
+    // 5. Import tamu dari Excel
+    Route::post('/{event_id}/guests/import', [EventController::class, 'importGuests'])->name('guests.import');
+
+    // 6. Export tamu ke Excel
+    Route::get('/{event_id}/guests/export', [EventController::class, 'exportGuests'])->name('guests.export');
 });
 
 

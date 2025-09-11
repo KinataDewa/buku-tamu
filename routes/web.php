@@ -68,26 +68,23 @@ Route::middleware(['auth', 'role:tukarfaktur'])->group(function () {
 });
 
 Route::prefix('events')->name('events.')->group(function () {
-    // 1. Daftar semua event
     Route::get('/', [EventController::class, 'index'])->name('index');
-
-    // 2. Form tambah event
     Route::get('/create', [EventController::class, 'create'])->name('create');
-    Route::post('/store', [EventController::class, 'store'])->name('store');
+    Route::post('/', [EventController::class, 'store'])->name('store');
 
-    // 3. Lihat daftar tamu per event
+    // Daftar tamu
     Route::get('/{event_id}/guests', [EventController::class, 'guests'])->name('guests');
 
-    // 4. Tandai kehadiran tamu
-    Route::post('/guests/{guest_id}/attendance', [EventController::class, 'markAttendance'])->name('guests.attendance');
-
-    // 5. Import tamu dari Excel
+    // Import & Export Excel
     Route::post('/{event_id}/guests/import', [EventController::class, 'importGuests'])->name('guests.import');
-
-    // 6. Export tamu ke Excel
     Route::get('/{event_id}/guests/export', [EventController::class, 'exportGuests'])->name('guests.export');
+
+    // Tambah tamu manual
+    Route::get('/{event_id}/guests/create', [EventController::class, 'createGuest'])->name('guests.create');
+    Route::post('/{event_id}/guests/store', [EventController::class, 'storeGuest'])->name('guests.store');
+
+    // Kehadiran tamu
+    Route::post('/{event_id}/guests/{guest_id}/attendance', [EventController::class, 'markAttendance'])->name('guests.attendance');
 });
-
-
 // Auth routes Breeze
 require __DIR__.'/auth.php';

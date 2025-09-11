@@ -12,7 +12,7 @@ use App\Exports\GuestsExport;
 class EventController extends Controller
 {
     /**
-     * Tampilkan semua event
+     * Menampilkan semua event
      */
     public function index()
     {
@@ -44,7 +44,7 @@ class EventController extends Controller
     }
 
     /**
-     * Menampilkan daftar tamu untuk event tertentu
+     * Menampilkan daftar tamu per event
      */
     public function guests($event_id)
     {
@@ -55,9 +55,12 @@ class EventController extends Controller
     /**
      * Tandai kehadiran tamu
      */
-    public function markAttendance(Request $request, $guest_id)
+    public function markAttendance(Request $request, $event_id, $guest_id)
     {
-        $guest = EventGuest::findOrFail($guest_id);
+        $guest = EventGuest::where('event_id', $event_id)
+                           ->where('id', $guest_id)
+                           ->firstOrFail();
+
         $guest->kehadiran = !$guest->kehadiran; // toggle hadir/belum hadir
         $guest->save();
 
@@ -65,7 +68,7 @@ class EventController extends Controller
     }
 
     /**
-     * Import daftar tamu dari Excel
+     * Import tamu dari Excel
      */
     public function importGuests(Request $request, $event_id)
     {
@@ -79,11 +82,39 @@ class EventController extends Controller
     }
 
     /**
-     * Export daftar nama tamu ke Excel (tanpa status kehadiran)
+     * Export tamu ke Excel
      */
     public function exportGuests($event_id)
     {
         $event = Event::findOrFail($event_id);
         return Excel::download(new GuestsExport($event_id), 'daftar_tamu_'.$event->nama_event.'.xlsx');
+    }
+
+    /**
+     * Form tambah tamu manual
+     */
+    public function createGuest($event_id)
+    {
+        $event = Event::findOrFail($event_id);
+        return view('events.create-guest', compact('event'));
+    }
+
+    /**
+     * Simpan tamu manual
+     */
+    public function storeGuest(Request $request, $event_id)
+    {
+        $request->validate([
+            'nama_tamu' => 'required|string|max:255',
+        ]);
+
+        EventGuest::create([
+            'event_id'   => $event_id,
+            'nama_tamu'  => $request->nama_tamu,
+            'kehadiran'  => 0, // default belum hadir
+        ]);
+
+        return redirect()->route('events.guests', $event_id)
+                         ->with('success', 'Tamu berhasil ditambahkan.');
     }
 }

@@ -18,17 +18,26 @@
                     <p class="text-muted mb-4" style="font-size: 1rem;">Kami senang Anda berkunjung!</p>
 
                     <div class="d-grid gap-3">
+                        {{-- Tombol Isi Buku Tamu --}}
                         <a href="{{ route('form') }}" class="btn btn-warning btn-lg rounded-pill text-white fw-medium shadow-sm">
                             <i class="bi bi-pencil-square me-2"></i> Isi Buku Tamu
                         </a>
+
+                        {{-- Tombol Lihat Riwayat --}}
                         <a href="{{ route('history') }}" class="btn btn-outline-secondary btn-lg rounded-pill fw-medium shadow-sm">
                             <i class="bi bi-journal-text me-2"></i> Lihat Riwayat
+                        </a>
+
+                        {{-- Tombol Kelola Event --}}
+                        <a href="{{ route('events.index') }}" class="btn btn-outline-primary btn-lg rounded-pill fw-medium shadow-sm">
+                            <i class="bi bi-calendar-event me-2"></i> Kelola Event
                         </a>
                     </div>
                 </div>
             </div>
         </div>
 
+        {{-- Kanan: Statistik Tamu --}}
         <div class="col-12 col-lg-6">
             <h4 class="text-center fw-semibold mb-4">📊 Statistik Tamu</h4>
             <div class="row row-cols-2 row-cols-md-2 g-3">
@@ -74,8 +83,6 @@
             transition: all 0.3s ease;
         }
 
-        
-
         .btn-warning:hover {
             background-color: #e0a32f;
             transform: translateY(-1px);
@@ -90,6 +97,19 @@
 
         .btn-outline-secondary:hover {
             background-color: #000;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-primary {
+            border-color: #0d6efd;
+            color: #0d6efd;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #0d6efd;
             color: #fff;
             transform: translateY(-1px);
         }
@@ -109,7 +129,7 @@
         }
     </style>
 
-        <style>
+    <style>
         /* Card Statistik */
         .card-stat {
             border-radius: 1rem;
@@ -144,7 +164,7 @@
         .card-stat[data-jenis="Tamu Tenant"] .fs-4 { color: #20c997; }       /* Hijau */
         .card-stat[data-jenis="Suplier/Vendor"] .fs-4 { color: #ffc107; }    /* Kuning */
         .card-stat[data-jenis="Tamu Karyawan SUA"] .fs-4 { color: #fd7e14; } /* Oranye */
-        .card-stat[data-jenis="FAT"] .fs-4 { color: #6f42c1; }           /* Ungu */
+        .card-stat[data-jenis="FAT"] .fs-4 { color: #6f42c1; }               /* Ungu */
 
         @media (max-width: 768px) {
             .card-stat .fs-4 {
@@ -152,7 +172,6 @@
             }
         }
     </style>
-
 @endpush
 
 @endsection

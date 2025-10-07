@@ -5,11 +5,8 @@
 @section('content')
 <div class="container py-4">
 
-    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold text-dark mb-0">
-            <i class="bi bi-calendar-event me-2 text-warning"></i> Daftar Event
-        </h3>
+        <h1 class="page-title mb-0">Daftar Event</h1>
         <a href="{{ route('events.create') }}" class="btn btn-warning rounded-3 shadow-sm">
             <i class="bi bi-plus-lg"></i> Tambah Event
         </a>

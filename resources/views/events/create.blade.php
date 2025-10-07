@@ -27,6 +27,30 @@
                            required>
                 </div>
 
+                {{-- Jenis Event --}}
+                <div class="mb-3">
+                    <label for="jenis_event" class="form-label fw-semibold">Jenis Event</label>
+                    <select name="jenis_event" id="jenis_event" class="form-select rounded-3" required>
+                        <option value="">-- Pilih Jenis Event --</option>
+                        <option value="Meeting">Meeting</option>
+                        <option value="Seminar">Seminar</option>
+                        <option value="Pameran">Pameran</option>
+                        <option value="Pelatihan">Pelatihan</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+
+                {{-- PT Penyelenggara --}}
+                <div class="mb-3">
+                    <label for="pt_penyelenggara" class="form-label fw-semibold">PT Penyelenggara</label>
+                    <input type="text" 
+                           name="pt_penyelenggara" 
+                           id="pt_penyelenggara" 
+                           class="form-control rounded-3" 
+                           placeholder="Masukkan nama PT penyelenggara"
+                           required>
+                </div>
+
                 {{-- Tanggal Event --}}
                 <div class="mb-4">
                     <label for="tanggal_event" class="form-label fw-semibold">Tanggal Event</label>

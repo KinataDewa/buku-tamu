@@ -35,10 +35,17 @@ class EventController extends Controller
     {
         $request->validate([
             'nama_event' => 'required|string|max:255',
+            'jenis_event' => 'required|string|max:100',
+            'pt_penyelenggara' => 'required|string|max:255',
             'tanggal_event' => 'required|date',
         ]);
 
-        Event::create($request->only('nama_event', 'tanggal_event'));
+        Event::create([
+            'nama_event' => $request->nama_event,
+            'jenis_event' => $request->jenis_event,
+            'pt_penyelenggara' => $request->pt_penyelenggara,
+            'tanggal_event' => $request->tanggal_event,
+        ]);
 
         return redirect()->route('events.index')->with('success', 'Event berhasil ditambahkan!');
     }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Lantai5Controller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\EventGuestController;
 
 Route::middleware('guest')->get('/', function () {
     return redirect()->route('login');
@@ -89,5 +90,7 @@ Route::prefix('events')->name('events.')->group(function () {
     // Kehadiran tamu
     Route::post('/{event_id}/guests/{guest_id}/attendance', [EventController::class, 'markAttendance'])->name('guests.attendance');
 });
+
+
 // Auth routes Breeze
 require __DIR__.'/auth.php';

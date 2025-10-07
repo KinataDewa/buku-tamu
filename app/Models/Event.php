@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
-    protected $fillable = ['nama_event', 'tanggal_event'];
+    protected $fillable = ['nama_event', 'jenis_event', 'pt_penyelenggara', 'tanggal_event'];
+
 
     public function guests()
     {

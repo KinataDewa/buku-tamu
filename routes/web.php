@@ -89,6 +89,10 @@ Route::prefix('events')->name('events.')->group(function () {
 
     // Kehadiran tamu
     Route::post('/{event_id}/guests/{guest_id}/attendance', [EventController::class, 'markAttendance'])->name('guests.attendance');
+
+    Route::post('/events/{eventId}/guests/store', [EventController::class, 'storeGuest'])->name('guests.store');
+
+    
 });
 
 

@@ -109,19 +109,27 @@ class EventController extends Controller
     /**
      * Simpan tamu manual
      */
-    public function storeGuest(Request $request, $event_id)
-    {
-        $request->validate([
-            'nama_tamu' => 'required|string|max:255',
-        ]);
+    public function storeGuest(Request $request, $eventId)
+{
+    $event = Event::findOrFail($eventId);
 
+    $validated = $request->validate([
+        'guests' => 'required|array',
+        'guests.*.nama_tamu' => 'required|string|max:255',
+        'guests.*.instansi' => 'nullable|string|max:255',
+        'guests.*.no_hp' => 'nullable|string|max:20',
+    ]);
+
+    foreach ($validated['guests'] as $guestData) {
         EventGuest::create([
-            'event_id'   => $event_id,
-            'nama_tamu'  => $request->nama_tamu,
-            'kehadiran'  => 0, // default belum hadir
+            'event_id' => $event->id,
+            'nama_tamu' => $guestData['nama_tamu'],
+            'instansi' => $guestData['instansi'] ?? null,
+            'no_hp' => $guestData['no_hp'] ?? null,
+            'hadir' => false,
         ]);
-
-        return redirect()->route('events.guests', $event_id)
-                         ->with('success', 'Tamu berhasil ditambahkan.');
     }
+
+    return redirect()->route('events.index', $event->id)->with('success', 'Daftar tamu berhasil ditambahkan!');
+}
 }

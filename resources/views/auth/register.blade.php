@@ -59,6 +59,7 @@
                 <option value="resepsionis_lantai5">Resepsionis Lantai 5</option>
                 <option value="direksi">Direksi</option>
                 <option value="tukarfaktur">Tukar Faktur</option>
+                <option value="event">Event</option>
             </select>
             @error('role')
                 <div class="invalid-feedback">{{ $message }}</div>

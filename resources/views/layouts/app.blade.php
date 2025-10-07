@@ -152,6 +152,16 @@
                         </li>
                     @endif
 
+                    {{-- Menu untuk event --}}
+                    @if(auth()->user()->role === 'event')
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('events.index') ? 'fw-bold' : '' }}" 
+                            href="{{ route('events.index') }}">
+                            <i class="bi bi-calendar-event"></i> Event
+                            </a>
+                        </li>
+                    @endif
+                    
                     {{-- Logout untuk semua user --}}
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST">

@@ -21,9 +21,12 @@ Route::middleware('auth')->get('/', function () {
         return redirect()->route('direksi.tamu');
     } elseif ($role === 'tukarfaktur') {
         return redirect()->route('tukarfaktur.tamu');
+    } elseif ($role === 'event') {
+        return redirect()->route('events.index'); // ✅ Tambahan baru
     }
     return redirect()->route('dashboard'); // default resepsionis_ground
 });
+
 
 Route::middleware('auth')->group(function () {
 

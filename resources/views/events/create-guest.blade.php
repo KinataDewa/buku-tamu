@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container py-4">
-    <h3 class="fw-bold mb-4">Tambah Tamu untuk {{ $event->nama_event }}</h3>
+    <h3 class="page-title">Tambah Tamu : {{ $event->nama_event }}</h3>
 
     @if(session('success'))
         <div class="alert alert-success rounded-4">{{ session('success') }}</div>
@@ -22,11 +22,11 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Instansi</label>
-                        <input type="text" name="guests[0][instansi]" class="form-control">
+                        <input type="text" name="guests[0][jenis_tamu]" class="form-control">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Nomor HP</label>
-                        <input type="text" name="guests[0][no_hp]" class="form-control">
+                        <input type="text" name="guests[0][no_telp]" class="form-control">
                     </div>
                     <div class="col-md-1 text-center">
                         <button type="button" class="btn btn-danger btn-sm remove-guest mt-3" disabled>
@@ -41,9 +41,10 @@
             <button type="button" class="btn btn-secondary" id="addGuestBtn">
                 <i class="bi bi-person-plus"></i> Tambah Tamu
             </button>
-            <button type="submit" class="btn btn-primary">
-                <i class="bi bi-save"></i> Simpan Semua
+            <button type="submit" class="btn btn-dark rounded-3 shadow-sm">
+                <i class="bi bi-save me-1"></i> Simpan Semua
             </button>
+            
         </div>
     </form>
 </div>
@@ -65,11 +66,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Instansi</label>
-                    <input type="text" name="guests[${index}][instansi]" class="form-control">
+                    <input type="text" name="guests[${index}][jenis_tamu]" class="form-control">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Nomor HP</label>
-                    <input type="text" name="guests[${index}][no_hp]" class="form-control">
+                    <input type="text" name="guests[${index}][no_telp]" class="form-control">
                 </div>
                 <div class="col-md-1 text-center">
                     <button type="button" class="btn btn-danger btn-sm remove-guest mt-3">

@@ -116,16 +116,16 @@ class EventController extends Controller
     $validated = $request->validate([
         'guests' => 'required|array',
         'guests.*.nama_tamu' => 'required|string|max:255',
-        'guests.*.instansi' => 'nullable|string|max:255',
-        'guests.*.no_hp' => 'nullable|string|max:20',
+        'guests.*.jenis_tamu' => 'nullable|string|max:255',
+        'guests.*.no_telp' => 'nullable|string|max:20',
     ]);
 
     foreach ($validated['guests'] as $guestData) {
         EventGuest::create([
             'event_id' => $event->id,
             'nama_tamu' => $guestData['nama_tamu'],
-            'instansi' => $guestData['instansi'] ?? null,
-            'no_hp' => $guestData['no_hp'] ?? null,
+            'jenis_tamu' => $guestData['jenis_tamu'] ?? null,
+            'no_telp' => $guestData['no_telp'] ?? null,
             'hadir' => false,
         ]);
     }

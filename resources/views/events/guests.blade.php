@@ -8,13 +8,10 @@
     <!-- Header -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
         <h3 class="fw-bold mb-0 text-dark">
-            <i class="bi bi-people-fill me-2 text-primary"></i> {{ $event->nama_event }}
+            <i class="page-title"></i> {{ $event->nama_event }}
         </h3>
 
         <div class="d-flex flex-wrap gap-2">
-            <a href="{{ route('events.index') }}" class="btn btn-outline-secondary rounded-3 shadow-sm">
-                <i class="bi bi-arrow-left me-1"></i> Kembali
-            </a>
             <a href="{{ route('events.guests.create', $event->id) }}" class="btn btn-dark rounded-3 shadow-sm">
                 <i class="bi bi-person-plus me-1"></i> Tambah Tamu
             </a>
@@ -38,8 +35,7 @@
             <form action="{{ route('events.guests.import', $event->id) }}" method="POST" enctype="multipart/form-data" class="d-flex flex-column flex-sm-row gap-2">
                 @csrf
                 <input type="file" name="file" class="form-control form-control-sm rounded-3 shadow-sm" required>
-                <button class="btn btn-dark btn-sm rounded-3 shadow-sm px-4">
-                    <i class="bi bi-upload me-1"></i> Import Excel
+                <button class="btn btn-dark btn-sm rounded-3 shadow-sm px-4">Import
                 </button>
             </form>
         </div>
@@ -54,15 +50,19 @@
                         <tr>
                             <th style="width:5%">No</th>
                             <th class="text-start">Nama Tamu</th>
+                            <th class="text-start">Jenis Tamu</th>
+                            <th class="text-start">No Telp</th>
                             <th style="width:15%">Kehadiran</th>
                             <th style="width:20%">Aksi</th>
-                        </tr>
+                            <th class="text-start">Detail</th>                        </tr>
                     </thead>
                     <tbody>
                         @forelse($event->guests as $guest)
                             <tr class="text-center">
                                 <td>{{ $loop->iteration }}</td>
                                 <td class="text-start fw-medium">{{ $guest->nama_tamu }}</td>
+                                <td class="text-start fw-medium">{{ $guest->jenis_tamu }}</td>
+                                <td class="text-start fw-medium">{{ $guest->no_telp }}</td>
                                 <td>
                                     <span class="badge px-3 py-2 rounded-pill {{ $guest->kehadiran ? 'bg-success' : 'bg-secondary' }}">
                                         {{ $guest->kehadiran ? 'Hadir' : 'Belum Hadir' }}

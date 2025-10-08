@@ -6,9 +6,6 @@
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="page-title mb-0 fw-bold">Tambah Event</h1>
-        <a href="{{ route('events.index') }}" class="btn btn-outline-secondary rounded-3 shadow-sm">
-            <i class="bi bi-arrow-left"></i> Kembali
-        </a>
     </div>
 
     <div class="card border-0 shadow-sm rounded-4">

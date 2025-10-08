@@ -8,6 +8,7 @@ use App\Models\EventGuest;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\GuestsImport;
 use App\Exports\GuestsExport;
+use App\Models\EventGuestAttendance;
 
 class EventController extends Controller
 {
@@ -62,16 +63,52 @@ class EventController extends Controller
     /**
      * Tandai kehadiran tamu
      */
-    public function markAttendance(Request $request, $event_id, $guest_id)
+   public function markAttendance(Request $request, $event_id, $guest_id)
     {
         $guest = EventGuest::where('event_id', $event_id)
-                           ->where('id', $guest_id)
-                           ->firstOrFail();
+                            ->where('id', $guest_id)
+                            ->firstOrFail();
 
-        $guest->kehadiran = !$guest->kehadiran; // toggle hadir/belum hadir
+        $foto = $request->input('foto');
+
+        // === CEK BASE64 ===
+        if ($foto && strpos($foto, 'data:image') === 0) {
+        preg_match("/^data:image\/(.*);base64,/", $foto, $matches);
+        $imageType = $matches[1] ?? 'jpeg';
+
+        $image = preg_replace('/^data:image\/(.*);base64,/', '', $foto);
+        $image = str_replace(' ', '+', $image);
+
+        $fileName = 'attendances/' . uniqid('guest_') . '.' . $imageType;
+        $saved = \Storage::disk('public')->put($fileName, base64_decode($image));
+
+        if (!$saved) {
+            return back()->with('error', 'Gagal menyimpan file di server.');
+        }
+
+        $path = $fileName;
+    }
+
+        // === FALLBACK UPLOAD MANUAL ===
+        elseif ($request->hasFile('foto')) {
+            $request->validate(['foto' => 'image|mimes:jpg,jpeg,png|max:2048']);
+            $path = $request->file('foto')->store('attendances', 'public');
+        } else {
+            return back()->with('error', 'Foto tidak ditemukan, silakan coba lagi.');
+        }
+
+        // Simpan data kehadiran
+        EventGuestAttendance::create([
+            'event_id' => $event_id,
+            'guest_id' => $guest_id,
+            'foto' => $path,
+            'waktu_hadir' => now(),
+        ]);
+
+        $guest->kehadiran = 1;
         $guest->save();
 
-        return back()->with('success', 'Status kehadiran berhasil diperbarui.');
+        return back()->with('success', 'Kehadiran tamu berhasil dicatat.');
     }
 
     /**
@@ -110,26 +147,26 @@ class EventController extends Controller
      * Simpan tamu manual
      */
     public function storeGuest(Request $request, $eventId)
-{
-    $event = Event::findOrFail($eventId);
+    {
+        $event = Event::findOrFail($eventId);
 
-    $validated = $request->validate([
-        'guests' => 'required|array',
-        'guests.*.nama_tamu' => 'required|string|max:255',
-        'guests.*.jenis_tamu' => 'nullable|string|max:255',
-        'guests.*.no_telp' => 'nullable|string|max:20',
-    ]);
-
-    foreach ($validated['guests'] as $guestData) {
-        EventGuest::create([
-            'event_id' => $event->id,
-            'nama_tamu' => $guestData['nama_tamu'],
-            'jenis_tamu' => $guestData['jenis_tamu'] ?? null,
-            'no_telp' => $guestData['no_telp'] ?? null,
-            'hadir' => false,
+        $validated = $request->validate([
+            'guests' => 'required|array',
+            'guests.*.nama_tamu' => 'required|string|max:255',
+            'guests.*.jenis_tamu' => 'nullable|string|max:255',
+            'guests.*.no_telp' => 'nullable|string|max:20',
         ]);
-    }
 
-    return redirect()->route('events.index', $event->id)->with('success', 'Daftar tamu berhasil ditambahkan!');
-}
+        foreach ($validated['guests'] as $guestData) {
+            EventGuest::create([
+                'event_id' => $event->id,
+                'nama_tamu' => $guestData['nama_tamu'],
+                'jenis_tamu' => $guestData['jenis_tamu'] ?? null,
+                'no_telp' => $guestData['no_telp'] ?? null,
+                'hadir' => false,
+            ]);
+        }
+
+        return redirect()->route('events.index', $event->id)->with('success', 'Daftar tamu berhasil ditambahkan!');
+    }
 }

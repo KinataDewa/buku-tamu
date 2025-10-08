@@ -29,18 +29,6 @@
         </div>
     @endif
 
-    <!-- Import Excel -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
-        <div class="card-body p-3">
-            <form action="{{ route('events.guests.import', $event->id) }}" method="POST" enctype="multipart/form-data" class="d-flex flex-column flex-sm-row gap-2">
-                @csrf
-                <input type="file" name="file" class="form-control form-control-sm rounded-3 shadow-sm" required>
-                <button class="btn btn-dark btn-sm rounded-3 shadow-sm px-4">Import
-                </button>
-            </form>
-        </div>
-    </div>
-
     <!-- Tabel Daftar Tamu -->
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body p-0">
@@ -48,13 +36,14 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light text-center">
                         <tr>
-                            <th style="width:5%">No</th>
+                            <th>No</th>
                             <th class="text-start">Nama Tamu</th>
                             <th class="text-start">Jenis Tamu</th>
                             <th class="text-start">No Telp</th>
-                            <th style="width:15%">Kehadiran</th>
-                            <th style="width:20%">Aksi</th>
-                            <th class="text-start">Detail</th>                        </tr>
+                            <th>Kehadiran</th>
+                            <th>Aksi</th>
+                            <th>Detail</th>
+                        </tr>
                     </thead>
                     <tbody>
                         @forelse($event->guests as $guest)
@@ -69,17 +58,78 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <form action="{{ route('events.guests.attendance', ['event_id' => $event->id, 'guest_id' => $guest->id]) }}" method="POST">
-                                        @csrf
-                                        <button class="btn btn-sm px-3 rounded-3 shadow-sm {{ $guest->kehadiran ? 'btn-outline-danger' : 'btn-outline-success' }}">
-                                            {{ $guest->kehadiran ? 'Batalkan' : 'Hadir' }}
+                                    @if(!$guest->kehadiran)
+                                        <button type="button" 
+                                            class="btn btn-sm btn-success rounded-3 shadow-sm open-camera-btn"
+                                            data-event-id="{{ $event->id }}" 
+                                            data-guest-id="{{ $guest->id }}">
+                                            <i class="bi bi-camera"></i> Ambil Foto
                                         </button>
-                                    </form>
+                                    @else
+                                        <button class="btn btn-sm btn-outline-danger rounded-3 shadow-sm" disabled>
+                                            <i class="bi bi-person-check me-1"></i> Sudah Hadir
+                                        </button>
+                                    @endif
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary rounded-3 shadow-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#detailModal{{ $guest->id }}">
+                                        <i class="bi bi-eye"></i> Detail
+                                    </button>
                                 </td>
                             </tr>
+
+                            <!-- Modal Detail -->
+                            <div class="modal fade" id="detailModal{{ $guest->id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content rounded-4 border-0 shadow-lg">
+                                        <div class="modal-header bg-dark text-white rounded-top-4">
+                                            <h5 class="modal-title">Detail Kehadiran - {{ $guest->nama_tamu }}</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row align-items-start">
+                                                <div class="col-md-6 text-center mb-3 mb-md-0">
+                                                    @if($guest->attendance && $guest->attendance->foto)
+                                                        <img src="{{ asset('storage/' . $guest->attendance->foto) }}" 
+                                                             class="img-fluid rounded-4 shadow-sm" 
+                                                             style="max-height: 250px; object-fit: cover;">
+                                                    @else
+                                                        <div class="text-muted fst-italic">Belum ada foto kehadiran</div>
+                                                    @endif
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <ul class="list-group list-group-flush">
+                                                        <li class="list-group-item"><strong>Nama:</strong> {{ $guest->nama_tamu }}</li>
+                                                        <li class="list-group-item"><strong>Jenis Tamu:</strong> {{ $guest->jenis_tamu ?? '-' }}</li>
+                                                        <li class="list-group-item"><strong>No Telp:</strong> {{ $guest->no_telp ?? '-' }}</li>
+                                                        <li class="list-group-item"><strong>Status:</strong>
+                                                            <span class="badge {{ $guest->kehadiran ? 'bg-success' : 'bg-secondary' }}">
+                                                                {{ $guest->kehadiran ? 'Hadir' : 'Belum Hadir' }}
+                                                            </span>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <strong>Waktu Kehadiran:</strong>
+                                                            @if($guest->attendance)
+                                                                {{ \Carbon\Carbon::parse($guest->attendance->waktu_hadir)->translatedFormat('d F Y - H:i') }}
+                                                            @else
+                                                                <span class="text-muted">Belum tercatat</span>
+                                                            @endif
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-0">
+                                            <button type="button" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Tutup</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center text-muted py-4">
+                                <td colspan="7" class="text-center text-muted py-4">
                                     <i class="bi bi-person-x fs-4 d-block mb-2"></i>
                                     Belum ada tamu yang terdaftar
                                 </td>
@@ -93,61 +143,81 @@
 
 </div>
 
-@push('styles')
-<style>
-    body {
-        background-color: #f8f9fa;
-    }
+<!-- Modal Kamera -->
+<div class="modal fade" id="cameraModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title">Ambil Foto Kehadiran</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <video id="cameraStream" autoplay playsinline class="w-100 rounded mb-3" style="max-height:300px;"></video>
+                <canvas id="photoCanvas" class="d-none"></canvas>
+                <button id="captureBtn" class="btn btn-success rounded-3 px-4"><i class="bi bi-camera"></i> Jepret</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-    /* Hover pada tabel */
-    .table-hover tbody tr:hover {
-        background-color: #f1f3f5;
-        transition: background-color 0.2s ease-in-out;
-    }
+<form id="photoForm" method="POST" enctype="multipart/form-data" style="display:none;">
+    @csrf
+    <input type="hidden" name="foto" id="fotoBase64">
+</form>
 
-    /* Style badge */
-    .badge {
-        font-size: 0.85rem;
-        font-weight: 500;
-    }
+@push('scripts')
+<script>
+let currentEventId, currentGuestId, stream;
 
-    /* Tombol outline success */
-    .btn-outline-success {
-        color: #198754;
-        border-color: #198754;
-        transition: 0.2s;
-    }
-    .btn-outline-success:hover {
-        background-color: #198754;
-        color: #fff;
-    }
+document.querySelectorAll('.open-camera-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        currentEventId = this.dataset.eventId;
+        currentGuestId = this.dataset.guestId;
 
-    /* Tombol outline danger */
-    .btn-outline-danger {
-        color: #dc3545;
-        border-color: #dc3545;
-        transition: 0.2s;
-    }
-    .btn-outline-danger:hover {
-        background-color: #dc3545;
-        color: #fff;
-    }
+        const modal = new bootstrap.Modal(document.getElementById('cameraModal'));
+        modal.show();
 
-    /* Untuk layar kecil */
-    @media (max-width: 576px) {
-        .d-flex.flex-md-row {
-            flex-direction: column !important;
-            align-items: flex-start !important;
+        const video = document.getElementById('cameraStream');
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+            video.srcObject = stream;
+        } catch (err) {
+            alert('Gagal mengakses kamera: ' + err.message);
         }
+    });
+});
 
-        .table thead {
-            font-size: 0.85rem;
-        }
+document.getElementById('captureBtn').addEventListener('click', async function() {
+    const canvas = document.getElementById('photoCanvas');
+    const video = document.getElementById('cameraStream');
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0);
 
-        .table tbody td {
-            font-size: 0.9rem;
-        }
+    const dataUrl = canvas.toDataURL('image/jpeg');
+    document.getElementById('fotoBase64').value = dataUrl;
+
+    // hentikan kamera
+    stream.getTracks().forEach(track => track.stop());
+    bootstrap.Modal.getInstance(document.getElementById('cameraModal')).hide();
+
+    // kirim ke server
+    const formData = new FormData();
+    formData.append('_token', '{{ csrf_token() }}');
+    formData.append('foto', dataUrl);
+
+    const response = await fetch(`/events/${currentEventId}/guests/${currentGuestId}/attendance`, {
+        method: 'POST',
+        body: formData
+    });
+
+    if (response.ok) {
+        location.reload();
+    } else {
+        alert('Gagal menyimpan foto.');
     }
-</style>
+});
+</script>
 @endpush
 @endsection

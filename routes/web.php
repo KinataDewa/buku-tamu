@@ -77,23 +77,20 @@ Route::prefix('events')->name('events.')->group(function () {
     Route::post('/', [EventController::class, 'store'])->name('store');
 
     // Daftar tamu
-    Route::get('/{event_id}/guests', [EventController::class, 'guests'])->name('guests');
+    Route::get('/{event}/guests', [EventController::class, 'guests'])->name('guests');
 
     // Import & Export Excel
-    Route::post('/{event_id}/guests/import', [EventController::class, 'importGuests'])->name('guests.import');
-    Route::get('/{event_id}/guests/export', [EventController::class, 'exportGuests'])->name('guests.export');
+    Route::post('/{event}/guests/import', [EventController::class, 'importGuests'])->name('guests.import');
+    Route::get('/{event}/guests/export', [EventController::class, 'exportGuests'])->name('guests.export');
 
     // Tambah tamu manual
-    Route::get('/{event_id}/guests/create', [EventController::class, 'createGuest'])->name('guests.create');
-    Route::post('/{event_id}/guests/store', [EventController::class, 'storeGuest'])->name('guests.store');
+    Route::get('/{event}/guests/create', [EventController::class, 'createGuest'])->name('guests.create');
+    Route::post('/{event}/guests/store', [EventController::class, 'storeGuest'])->name('guests.store');
 
     // Kehadiran tamu
-    Route::post('/{event_id}/guests/{guest_id}/attendance', [EventController::class, 'markAttendance'])->name('guests.attendance');
-
-    Route::post('/events/{eventId}/guests/store', [EventController::class, 'storeGuest'])->name('guests.store');
-
-    
+    Route::post('/{event}/guests/{guest}/attendance', [EventController::class, 'markAttendance'])->name('guests.attendance');
 });
+
 
 
 // Auth routes Breeze

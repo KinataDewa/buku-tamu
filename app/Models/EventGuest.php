@@ -19,4 +19,10 @@ class EventGuest extends Model
     {
         return $this->belongsTo(Event::class, 'event_id');
     }
+
+    public function attendance()
+    {
+        return $this->hasOne(EventGuestAttendance::class, 'guest_id');
+    }
+
 }
